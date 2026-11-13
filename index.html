@@ -2,13 +2,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <title>Dhruv Gamepad</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Layout: one full-screen landscape controller (600x290 drawing) centred on black. Single dark look by design. */
-:root{--bg:#000;--body:#20232B;--edge:#5A6070;--btn:#2E323D;--down:#4A5060;--stick:#0F1116;--pad:#14161C;--text:#E6E8EE;--light:#4DA3FF;--tri:#5DCAA5;--cir:#F09595;--cro:#85B7EB;--squ:#ED93B1;color-scheme:dark}
+/* Layout: one full-screen landscape controller (600x290 drawing) centred on black. Settings panel sizes each control. */
+:root{--bg:#000;--edge:#5A6070;--btn:#2E323D;--down:#4A5060;--pad:#14161C;--text:#E6E8EE;color-scheme:dark}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#pad{width:100%;flex:1;min-height:0;display:block}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#pad{width:100%;flex:1;min-height:0;display:block;transform-origin:center center}
 #rot{display:none;font-size:13px;color:#B4B2A9;text-align:center;padding:8px 0}
 @media (orientation:portrait){#rot{display:block}}
 .b{cursor:pointer}
@@ -20,78 +19,111 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .lbl{fill:#D3D1C7}
 .sym{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+#ui{position:fixed;top:8px;right:8px;z-index:7;display:flex;gap:6px}
+#ui button{background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif;min-height:44px}
+#ui svg{display:block;width:20px;height:20px}
+#fs[hidden],#panel[hidden]{display:none}
+#panel{position:fixed;top:60px;right:8px;bottom:8px;width:min(330px,62vw);z-index:6;background:#0D0F14;border:1px solid #5A6070;border-radius:14px;padding:12px 14px;overflow-y:auto;touch-action:pan-y;box-sizing:border-box}
+#panel h2{margin:0 0 8px;font-size:16px;font-weight:600}
+.row{display:grid;grid-template-columns:92px 1fr 46px;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #1F232B;font-size:14px}
+.row input{width:100%;min-width:0;touch-action:pan-y}
+.row span.v{text-align:right;color:#B4B2A9;font-variant-numeric:tabular-nums}
+#panel .acts{display:flex;gap:8px;margin-top:10px}
+#panel .acts button{flex:1;background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px;font:14px system-ui,sans-serif}
 </style>
-<style>#ui{position:fixed;top:8px;right:8px;z-index:5;display:flex;gap:6px}#ui button{position:static;background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif}#pad{transform-origin:center center}#fsOLD{background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif}#fs[hidden]{display:none}</style>
-<div id="ui"><button id="sm" type="button" aria-label="Chhota">&minus;</button><button id="bg" type="button" aria-label="Bada">+</button><button id="fs" type="button">Fullscreen</button></div>
+<div id="ui">
+<button id="gear" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#E6E8EE" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button>
+<button id="sm" type="button" aria-label="Chhota">&minus;</button>
+<button id="bg" type="button" aria-label="Bada">+</button>
+<button id="fs" type="button">Fullscreen</button>
+</div>
+<div id="panel" hidden>
+<h2>Settings: size</h2>
+<div id="rows"></div>
+<div class="acts"><button id="reset" type="button">Reset</button><button id="close" type="button">Band karo</button></div>
+</div>
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
-<g class="b" data-id="L2"><rect class="f" x="100" y="4" width="90" height="20" rx="10"/><text x="145" y="14">L2</text></g>
-<g class="b" data-id="L1"><rect class="f" x="96" y="26" width="98" height="14" rx="7"/></g>
-<g class="b" data-id="R2"><rect class="f" x="410" y="4" width="90" height="20" rx="10"/><text x="455" y="14">R2</text></g>
-<g class="b" data-id="R1"><rect class="f" x="406" y="26" width="98" height="14" rx="7"/></g>
+<g class="item" data-k="L2" data-cx="145" data-cy="14"><g class="b" data-id="L2"><rect class="f" x="100" y="4" width="90" height="20" rx="10"/><text x="145" y="14">L2</text></g></g>
+<g class="item" data-k="L1" data-cx="145" data-cy="33"><g class="b" data-id="L1"><rect class="f" x="96" y="26" width="98" height="14" rx="7"/></g><text x="145" y="33" style="font-size:10px;fill:#8A8D99">L1</text></g>
+<g class="item" data-k="R2" data-cx="455" data-cy="14"><g class="b" data-id="R2"><rect class="f" x="410" y="4" width="90" height="20" rx="10"/><text x="455" y="14">R2</text></g></g>
+<g class="item" data-k="R1" data-cx="455" data-cy="33"><g class="b" data-id="R1"><rect class="f" x="406" y="26" width="98" height="14" rx="7"/></g><text x="455" y="33" style="font-size:10px;fill:#8A8D99">R1</text></g>
 <path d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="#20232B" stroke="#5A6070" stroke-width="2.5"/>
-<text x="145" y="33" style="font-size:10px;fill:#8A8D99">L1</text>
-<text x="455" y="33" style="font-size:10px;fill:#8A8D99">R1</text>
-<g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93">Touchpad</text></g>
-<line x1="231" y1="131" x2="369" y2="131" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/>
-<polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="#2E323D" stroke="#5A6070" stroke-width="1.5" stroke-linejoin="round"/>
+<g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93">Touchpad</text></g><line x1="231" y1="131" x2="369" y2="131" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
+<g class="item" data-k="DP" data-cx="110" data-cy="105"><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="#2E323D" stroke="#5A6070" stroke-width="1.5" stroke-linejoin="round"/>
 <g class="b dp" data-id="UP"><rect class="f" x="99" y="73" width="22" height="21"/></g>
 <g class="b dp" data-id="DOWN"><rect class="f" x="99" y="116" width="22" height="21"/></g>
 <g class="b dp" data-id="LEFT"><rect class="f" x="78" y="94" width="21" height="22"/></g>
-<g class="b dp" data-id="RIGHT"><rect class="f" x="121" y="94" width="21" height="22"/></g>
-<g class="b" data-id="TRIANGLE"><circle class="f" cx="490" cy="75" r="14"/><path class="sym" d="M490,69.5 L496,78.5 L484,78.5 Z" stroke="#5DCAA5"/></g>
-<g class="b" data-id="CIRCLE"><circle class="f" cx="520" cy="105" r="14"/><circle class="sym" cx="520" cy="105" r="6" stroke="#F09595"/></g>
-<g class="b" data-id="CROSS"><circle class="f" cx="490" cy="135" r="14"/><path class="sym" d="M484,129 L496,141 M496,129 L484,141" stroke="#85B7EB"/></g>
-<g class="b" data-id="SQUARE"><circle class="f" cx="460" cy="105" r="14"/><rect class="sym" x="454" y="99" width="12" height="12" stroke="#ED93B1"/></g>
-<g class="stick" data-cx="215" data-cy="168"><circle cx="215" cy="168" r="34" fill="#14161C" stroke="#5A6070" stroke-width="2"/><g class="knob"><circle cx="215" cy="168" r="23" fill="#0F1116" stroke="#5A6070" stroke-width="1.5"/><circle cx="215" cy="168" r="10" fill="none" stroke="#5A6070" stroke-width="1.5"/></g></g>
-<g class="stick" data-cx="385" data-cy="168"><circle cx="385" cy="168" r="34" fill="#14161C" stroke="#5A6070" stroke-width="2"/><g class="knob"><circle cx="385" cy="168" r="23" fill="#0F1116" stroke="#5A6070" stroke-width="1.5"/><circle cx="385" cy="168" r="10" fill="none" stroke="#5A6070" stroke-width="1.5"/></g></g>
-<g class="b" data-id="PS"><circle class="f" cx="300" cy="150" r="12" style="stroke:#4DA3FF;stroke-width:2"/><text x="300" y="150">PS</text></g>
-<g class="b" data-id="CREATE"><rect class="f" x="191" y="92" width="28" height="12" rx="6"/></g>
-<g class="b" data-id="OPTIONS"><rect class="f" x="381" y="92" width="28" height="12" rx="6"/></g>
-<text class="lbl" x="205" y="118">Create</text>
-<text class="lbl" x="395" y="118">Options</text>
+<g class="b dp" data-id="RIGHT"><rect class="f" x="121" y="94" width="21" height="22"/></g></g>
+<g class="item" data-k="TRI" data-cx="490" data-cy="75"><g class="b" data-id="TRIANGLE"><circle class="f" cx="490" cy="75" r="14"/><path class="sym" d="M490,69.5 L496,78.5 L484,78.5 Z" stroke="#5DCAA5"/></g></g>
+<g class="item" data-k="CIR" data-cx="520" data-cy="105"><g class="b" data-id="CIRCLE"><circle class="f" cx="520" cy="105" r="14"/><circle class="sym" cx="520" cy="105" r="6" stroke="#F09595"/></g></g>
+<g class="item" data-k="CRO" data-cx="490" data-cy="135"><g class="b" data-id="CROSS"><circle class="f" cx="490" cy="135" r="14"/><path class="sym" d="M484,129 L496,141 M496,129 L484,141" stroke="#85B7EB"/></g></g>
+<g class="item" data-k="SQU" data-cx="460" data-cy="105"><g class="b" data-id="SQUARE"><circle class="f" cx="460" cy="105" r="14"/><rect class="sym" x="454" y="99" width="12" height="12" stroke="#ED93B1"/></g></g>
+<g class="item" data-k="LS" data-cx="215" data-cy="168"><g class="stick" data-cx="215" data-cy="168"><circle cx="215" cy="168" r="34" fill="#14161C" stroke="#5A6070" stroke-width="2"/><g class="knob"><circle cx="215" cy="168" r="23" fill="#0F1116" stroke="#5A6070" stroke-width="1.5"/><circle cx="215" cy="168" r="10" fill="none" stroke="#5A6070" stroke-width="1.5"/></g></g></g>
+<g class="item" data-k="RS" data-cx="385" data-cy="168"><g class="stick" data-cx="385" data-cy="168"><circle cx="385" cy="168" r="34" fill="#14161C" stroke="#5A6070" stroke-width="2"/><g class="knob"><circle cx="385" cy="168" r="23" fill="#0F1116" stroke="#5A6070" stroke-width="1.5"/><circle cx="385" cy="168" r="10" fill="none" stroke="#5A6070" stroke-width="1.5"/></g></g></g>
+<g class="item" data-k="PS" data-cx="300" data-cy="150"><g class="b" data-id="PS"><circle class="f" cx="300" cy="150" r="12" style="stroke:#4DA3FF;stroke-width:2"/><text x="300" y="150">PS</text></g></g>
+<g class="item" data-k="CR" data-cx="205" data-cy="105"><g class="b" data-id="CREATE"><rect class="f" x="191" y="92" width="28" height="12" rx="6"/></g><text class="lbl" x="205" y="118">Create</text></g>
+<g class="item" data-k="OP" data-cx="395" data-cy="105"><g class="b" data-id="OPTIONS"><rect class="f" x="381" y="92" width="28" height="12" rx="6"/></g><text class="lbl" x="395" y="118">Options</text></g>
 </svg>
 <script>
 (function(){
 var svg=document.getElementById('pad');
+var SZ={},ALL=1;
+try{var a=JSON.parse(localStorage.getItem('dgSizes')||'{}');if(a&&typeof a==='object')SZ=a;var g=parseFloat(localStorage.getItem('dgSize'));if(g>=0.5&&g<=1.15)ALL=g;}catch(x){}
+var items={};
+document.querySelectorAll('.item').forEach(function(el){items[el.dataset.k]=el;});
+function save(){try{localStorage.setItem('dgSizes',JSON.stringify(SZ));localStorage.setItem('dgSize',ALL.toFixed(2));}catch(x){}}
+function sc(k){var v=SZ[k];return(v>=0.5&&v<=1.5)?v:1;}
+function applyItem(k){var el=items[k],cx=+el.dataset.cx,cy=+el.dataset.cy,s=sc(k);el.setAttribute('transform','translate('+cx+' '+cy+') scale('+s+') translate('+(-cx)+' '+(-cy)+')');}
+function applyAll(){svg.style.transform='scale('+ALL.toFixed(2)+')';}
+Object.keys(items).forEach(applyItem);applyAll();
+
 function toSvg(e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
 document.querySelectorAll('.b').forEach(function(el){
  el.addEventListener('pointerdown',function(e){e.preventDefault();el.classList.add('on');try{el.setPointerCapture(e.pointerId);}catch(x){}});
  ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){el.addEventListener(t,function(){el.classList.remove('on');});});
 });
 document.querySelectorAll('.stick').forEach(function(s){
- var cx=+s.dataset.cx,cy=+s.dataset.cy,knob=s.querySelector('.knob'),id=null,max=12;
- function move(e){var p=toSvg(e),dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}knob.setAttribute('transform','translate('+dx.toFixed(1)+','+dy.toFixed(1)+')');}
+ var key=s.parentNode.dataset.k,cx=+s.dataset.cx,cy=+s.dataset.cy,knob=s.querySelector('.knob'),id=null;
+ function move(e){var z=sc(key),max=12*z,p=toSvg(e),dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}knob.setAttribute('transform','translate('+(dx/z).toFixed(1)+','+(dy/z).toFixed(1)+')');}
  function reset(){id=null;knob.setAttribute('transform','translate(0,0)');}
  s.addEventListener('pointerdown',function(e){e.preventDefault();if(id!==null)return;id=e.pointerId;try{s.setPointerCapture(id);}catch(x){}move(e);});
  s.addEventListener('pointermove',function(e){if(e.pointerId===id)move(e);});
  ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){s.addEventListener(t,function(e){if(e.pointerId===id)reset();});});
 });
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
-})();
-</script>
-<script>
-(function(){
+
+var panel=document.getElementById('panel'),rows=document.getElementById('rows');
+var LIST=[['ALL','Pura controller'],['L1','L1'],['L2','L2'],['R1','R1'],['R2','R2'],['DP','D-Pad'],['TRI','Triangle'],['CIR','Circle'],['CRO','Cross'],['SQU','Square'],['LS','Left stick'],['RS','Right stick'],['TP','Touchpad'],['PS','PS button'],['CR','Create'],['OP','Options']];
+var inputs={};
+LIST.forEach(function(r){
+ var k=r[0],row=document.createElement('div');row.className='row';
+ var lab=document.createElement('label');lab.textContent=r[1];
+ var inp=document.createElement('input');inp.type='range';inp.step='5';inp.id='sz-'+k;lab.htmlFor=inp.id;
+ if(k==='ALL'){inp.min='50';inp.max='115';}else{inp.min='50';inp.max='150';}
+ var v=document.createElement('span');v.className='v';
+ function show(){var n=Math.round((k==='ALL'?ALL:sc(k))*100);inp.value=n;v.textContent=n+'%';}
+ inp.addEventListener('input',function(){var n=+inp.value/100;if(k==='ALL'){ALL=n;applyAll();}else{SZ[k]=n;applyItem(k);}v.textContent=Math.round(n*100)+'%';save();});
+ inputs[k]=show;show();
+ row.appendChild(lab);row.appendChild(inp);row.appendChild(v);rows.appendChild(row);
+});
+function showAll(){Object.keys(inputs).forEach(function(k){inputs[k]();});}
+document.getElementById('gear').addEventListener('click',function(){panel.hidden=!panel.hidden;});
+document.getElementById('close').addEventListener('click',function(){panel.hidden=true;});
+document.getElementById('reset').addEventListener('click',function(){SZ={};ALL=1;Object.keys(items).forEach(applyItem);applyAll();showAll();save();});
+document.getElementById('sm').addEventListener('click',function(){ALL=Math.max(0.5,Math.round((ALL-0.05)*100)/100);applyAll();showAll();save();});
+document.getElementById('bg').addEventListener('click',function(){ALL=Math.min(1.15,Math.round((ALL+0.05)*100)/100);applyAll();showAll();save();});
+
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});}).catch(function(){});}
 if(window.caches){caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});}).catch(function(){});}
-var b=document.getElementById('fs'),el=document.documentElement;
+var fb=document.getElementById('fs'),el=document.documentElement;
 function fsOn(){return document.fullscreenElement||document.webkitFullscreenElement;}
-b.addEventListener('click',function(){
+fb.addEventListener('click',function(){
  var f=el.requestFullscreen||el.webkitRequestFullscreen;
- if(!f){b.textContent='Fullscreen nahi chalta';return;}
- try{var p=f.call(el);if(p&&p.then){p.then(function(){try{screen.orientation.lock('landscape').catch(function(){});}catch(x){}}).catch(function(){b.textContent='Fullscreen nahi chalta';});}}catch(x){}
+ if(!f){fb.textContent='Fullscreen nahi chalta';return;}
+ try{var p=f.call(el);if(p&&p.then){p.then(function(){try{screen.orientation.lock('landscape').catch(function(){});}catch(x){}}).catch(function(){fb.textContent='Fullscreen nahi chalta';});}}catch(x){}
 });
-function sync(){b.hidden=!!fsOn();}
+function sync(){fb.hidden=!!fsOn();}
 document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
-})();
-</script>
-<script>
-(function(){
-var pad=document.getElementById('pad'),k=1;
-try{var v=parseFloat(localStorage.getItem('dgSize'));if(v>=0.5&&v<=1.15)k=v;}catch(x){}
-function ap(){pad.style.transform='scale('+k.toFixed(2)+')';try{localStorage.setItem('dgSize',k.toFixed(2));}catch(x){}}
-document.getElementById('sm').addEventListener('click',function(){k=Math.max(0.5,Math.round((k-0.05)*100)/100);ap();});
-document.getElementById('bg').addEventListener('click',function(){k=Math.min(1.15,Math.round((k+0.05)*100)/100);ap();});
-ap();
 })();
 </script>
