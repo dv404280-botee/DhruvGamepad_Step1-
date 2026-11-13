@@ -22,23 +22,31 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 #ui{position:fixed;top:8px;right:8px;z-index:7;display:flex;gap:6px}
 #ui button{background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif;min-height:44px}
 #ui svg{display:block;width:20px;height:20px}
-#fs[hidden],#panel[hidden]{display:none}
+#gear[hidden],#corner[hidden],#panel[hidden]{display:none}
+#corner{position:fixed;top:0;right:0;width:72px;height:72px;z-index:7}
 #panel{position:fixed;top:60px;right:8px;bottom:8px;width:min(330px,62vw);z-index:6;background:#0D0F14;border:1px solid #5A6070;border-radius:14px;padding:12px 14px;overflow-y:auto;touch-action:pan-y;box-sizing:border-box}
 #panel h2{margin:0 0 8px;font-size:16px;font-weight:600}
+#panel h3{margin:12px 0 4px;font-size:14px;font-weight:600;color:#B4B2A9}
+.quick{display:flex;gap:8px;margin-bottom:6px}.quick button{flex:1}.quick #fs{flex:3}
+.tg{display:flex;gap:10px;align-items:center;padding:8px 0;font-size:14px}.tg input{width:22px;height:22px;flex:none}
+#hideGear{width:100%;margin-top:4px}
+.hint{margin:6px 0 0;font-size:12px;color:#8A8D99}
 .row{display:grid;grid-template-columns:92px 1fr 46px;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #1F232B;font-size:14px}
 .row input{width:100%;min-width:0;touch-action:pan-y}
 .row span.v{text-align:right;color:#B4B2A9;font-variant-numeric:tabular-nums}
 #panel .acts{display:flex;gap:8px;margin-top:10px}
-#panel .acts button{flex:1;background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px;font:14px system-ui,sans-serif}
+#panel button{flex:1;background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px;font:14px system-ui,sans-serif}
 </style>
-<div id="ui">
-<button id="gear" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#E6E8EE" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button>
-<button id="sm" type="button" aria-label="Chhota">&minus;</button>
-<button id="bg" type="button" aria-label="Bada">+</button>
-<button id="fs" type="button">Fullscreen</button>
-</div>
+<div id="ui"><button id="gear" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#E6E8EE" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button></div>
+<div id="corner" hidden></div>
 <div id="panel" hidden>
-<h2>Settings: size</h2>
+<h2>Settings</h2>
+<div class="quick"><button id="fs" type="button">Fullscreen</button><button id="sm" type="button" aria-label="Chhota">&minus;</button><button id="bg" type="button" aria-label="Bada">+</button></div>
+<label class="tg"><input type="checkbox" id="vib" checked> Vibration (button dabane par)</label>
+<label class="tg"><input type="checkbox" id="awake" checked> Screen on rakho (band na ho)</label>
+<button id="hideGear" type="button">Settings icon chhupao</button>
+<p class="hint">Chhupane ke baad wapas lane ke liye upar dayein kone mein 3 baar jaldi tap karo.</p>
+<h3>Size (har button ka)</h3>
 <div id="rows"></div>
 <div class="acts"><button id="reset" type="button">Reset</button><button id="close" type="button">Band karo</button></div>
 </div>
@@ -119,11 +127,29 @@ if(window.caches){caches.keys().then(function(k){k.forEach(function(n){caches.de
 var fb=document.getElementById('fs'),el=document.documentElement;
 function fsOn(){return document.fullscreenElement||document.webkitFullscreenElement;}
 fb.addEventListener('click',function(){
+ if(fsOn()){var x=document.exitFullscreen||document.webkitExitFullscreen;if(x)try{x.call(document);}catch(e){}return;}
  var f=el.requestFullscreen||el.webkitRequestFullscreen;
  if(!f){fb.textContent='Fullscreen nahi chalta';return;}
  try{var p=f.call(el);if(p&&p.then){p.then(function(){try{screen.orientation.lock('landscape').catch(function(){});}catch(x){}}).catch(function(){fb.textContent='Fullscreen nahi chalta';});}}catch(x){}
 });
-function sync(){fb.hidden=!!fsOn();}
+function sync(){fb.textContent=fsOn()?'Fullscreen band':'Fullscreen';}
 document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
+
+var O={vib:true,awake:true};
+try{var o=JSON.parse(localStorage.getItem('dgOpts')||'{}');if(o.vib===false)O.vib=false;if(o.awake===false)O.awake=false;}catch(x){}
+var vibEl=document.getElementById('vib'),awEl=document.getElementById('awake');
+vibEl.checked=O.vib;awEl.checked=O.awake;
+function saveO(){try{localStorage.setItem('dgOpts',JSON.stringify(O));}catch(x){}}
+vibEl.addEventListener('change',function(){O.vib=vibEl.checked;saveO();if(O.vib&&navigator.vibrate)navigator.vibrate(30);});
+document.addEventListener('pointerdown',function(e){if(O.vib&&navigator.vibrate&&e.target.closest&&e.target.closest('.b'))navigator.vibrate(15);},true);
+var wl=null;
+function wake(){if(!O.awake||!navigator.wakeLock||document.visibilityState!=='visible'||wl)return;try{navigator.wakeLock.request('screen').then(function(l){wl=l;l.addEventListener('release',function(){wl=null;});}).catch(function(){});}catch(x){}}
+function unwake(){if(wl){try{wl.release();}catch(x){}wl=null;}}
+awEl.addEventListener('change',function(){O.awake=awEl.checked;saveO();if(O.awake)wake();else unwake();});
+document.addEventListener('visibilitychange',wake);document.addEventListener('pointerdown',wake);wake();
+
+var gear=document.getElementById('gear'),corner=document.getElementById('corner'),taps=[];
+document.getElementById('hideGear').addEventListener('click',function(){panel.hidden=true;gear.hidden=true;corner.hidden=false;taps=[];});
+corner.addEventListener('pointerdown',function(e){e.preventDefault();var t=Date.now();taps=taps.filter(function(x){return t-x<1200;});taps.push(t);if(taps.length>=3){taps=[];gear.hidden=false;corner.hidden=true;}});
 })();
 </script>
