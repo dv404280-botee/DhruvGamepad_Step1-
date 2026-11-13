@@ -5,7 +5,7 @@
 <style>
 /* Layout: one full-screen landscape controller (600x290 drawing) centred on black. Settings panel sizes each control. */
 :root{--bg:#000;--edge:#2F7FD6;--btn:#1E4F8F;--down:#2A5FA8;--pad:#0A111F;--text:#E6E8EE;color-scheme:dark}
-html,body{height:100%}
+html,body{height:100%;overscroll-behavior:none}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
 #pad{width:100%;flex:1;min-height:0;display:block;transform-origin:center center}
 #rot{display:none;font-size:13px;color:#B4B2A9;text-align:center;padding:8px 0}
@@ -17,6 +17,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 @keyframes pulse{0%,100%{opacity:calc(var(--neon,.2)*.55)}50%{opacity:var(--neon,.2)}}
 #pad .neon{animation:pulse 3.2s ease-in-out infinite}
 #pad.noneon .neon{display:none}
+#pad.nopulse .neon{animation:none;opacity:var(--neon,.2)}
 @media (prefers-reduced-motion:reduce){#pad .neon{animation:none;opacity:var(--neon,.2)}}
 .f{fill:url(#gBtn);stroke:var(--edge);stroke-width:1.5}
 .dp .f{fill:transparent;stroke:none}
@@ -38,6 +39,12 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 .quick{display:flex;gap:8px;margin-bottom:6px}.quick button{flex:1}.quick #fs{flex:3}
 .tg{display:flex;gap:10px;align-items:center;padding:8px 0;font-size:14px}.tg input{width:22px;height:22px;flex:none}
 #hideGear{width:100%;margin-top:4px}
+details{border-top:1px solid #1F232B;margin-top:12px;padding-top:8px}summary{font-size:14px;font-weight:600;color:#B4B2A9;padding:8px 0;cursor:pointer}
+.krow{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;padding:4px 0;font-size:14px}
+.krow select{width:100%;min-width:0;background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:8px;padding:8px;font:14px system-ui,sans-serif}
+#keyreset{width:100%;margin-top:8px}
+#keytest{position:fixed;left:10px;bottom:10px;z-index:6;background:#0A111F;border:1px solid #2F7FD6;border-radius:10px;padding:8px 12px;font:14px system-ui,sans-serif;color:#E6E8EE;pointer-events:none}
+#keytest[hidden]{display:none}
 .hint{margin:6px 0 0;font-size:12px;color:#7FB4F0}
 .row{display:grid;grid-template-columns:92px 1fr 46px;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #1F232B;font-size:14px}
 .row input{width:100%;min-width:0;touch-action:pan-y}
@@ -53,12 +60,19 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <label class="tg"><input type="checkbox" id="vib" checked> Vibration (button dabane par)</label>
 <label class="tg"><input type="checkbox" id="awake" checked> Screen on rakho (band na ho)</label>
 <div class="row"><label for="neon">Neon light</label><input type="range" id="neon" min="0" max="100" step="5" value="20"><span class="v" id="neonv">20%</span></div>
+<label class="tg"><input type="checkbox" id="pulse" checked> Neon halka halka chamke (dheema phone par band karo)</label>
 <button id="hideGear" type="button">Settings icon chhupao</button>
 <p class="hint">Chhupane ke baad wapas lane ke liye upar dayein kone mein 3 baar jaldi tap karo.</p>
 <h3>Size (har button ka)</h3>
 <div id="rows"></div>
+<details id="keysec"><summary>Keyboard keys</summary>
+<p class="hint">Har button ke liye ek key chuno. Button dabane par wo key press hoti hai, chhodne par chhut jati hai. Abhi ye sirf test hai, kisi doosre device par nahi jati.</p>
+<label class="tg"><input type="checkbox" id="ktest"> Key test dikhao (screen par neeche)</label>
+<div id="keyrows"></div>
+<button id="keyreset" type="button">Keys reset</button></details>
 <div class="acts"><button id="reset" type="button">Reset</button><button id="close" type="button">Band karo</button></div>
 </div>
+<div id="keytest" hidden></div>
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
 <defs>
@@ -77,8 +91,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <path d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="url(#gBody)" stroke="#2F7FD6" stroke-width="2.5"/>
 <path d="M176,47 C242,32 358,32 424,47" fill="none" stroke="#8FCBFF" stroke-width="1" opacity=".6" stroke-linecap="round"/>
 <path d="M192,54 H408 Q424,54 424,70 V198 Q424,212 410,212 H190 Q176,212 176,198 V70 Q176,54 192,54 Z" fill="url(#gPlate)" stroke="#1E4F8F" stroke-width="1.5"/>
-<g pointer-events="none"><circle cx="300" cy="44" r="9.5" fill="#2A0A0C" stroke="#FF2D2D" stroke-width="1.8"/><path d="M296.5,39.2 H300 C304,39.2 305.6,41.6 305.6,44 C305.6,46.4 304,48.8 300,48.8 H296.5 Z" fill="none" stroke="#FF2D2D" stroke-width="1.8" stroke-linejoin="round"/></g>
-<g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93" style="fill:#7FB4F0">Touchpad</text></g><path class="neon" d="M221,68 Q215,93 221,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M221,68 Q215,93 221,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/><path class="neon" d="M379,68 Q385,93 379,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M379,68 Q385,93 379,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
+<g pointer-events="none" transform="translate(300 44) scale(.68) translate(-300 -44)"><circle cx="300" cy="44" r="9.5" fill="#2A0A0C" stroke="#FF2D2D" stroke-width="1.8"/><path d="M296.5,39.2 H300 C304,39.2 305.6,41.6 305.6,44 C305.6,46.4 304,48.8 300,48.8 H296.5 Z" fill="none" stroke="#FF2D2D" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93" style="fill:#7FB4F0">Touchpad</text></g><circle id="tpdot" cx="300" cy="93" r="6" fill="#8FCBFF" stroke="#2F7FD6" stroke-width="1.5" pointer-events="none" style="opacity:0;transition:opacity .25s"/><path class="neon" d="M221,68 Q215,93 221,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M221,68 Q215,93 221,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/><path class="neon" d="M379,68 Q385,93 379,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M379,68 Q385,93 379,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
 <g class="item" data-k="DP" data-cx="110" data-cy="105"><circle cx="110" cy="105" r="41" fill="#0A111F" stroke="#1E4F8F" stroke-width="2"/><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="url(#gBtn)" stroke="#2F7FD6" stroke-width="1.5" stroke-linejoin="round"/>
 <polygon points="110,78 105,87 115,87" fill="#7FB4F0"/><polygon points="110,132 105,123 115,123" fill="#7FB4F0"/><polygon points="83,105 92,100 92,110" fill="#7FB4F0"/><polygon points="137,105 128,100 128,110" fill="#7FB4F0"/>
 <g class="b dp" data-id="UP"><rect class="f" x="99" y="73" width="22" height="21"/></g>
@@ -117,8 +131,8 @@ document.querySelectorAll('.b').forEach(function(el){
 });
 document.querySelectorAll('.stick').forEach(function(s){
  var key=s.parentNode.dataset.k,cx=+s.dataset.cx,cy=+s.dataset.cy,knob=s.querySelector('.knob'),id=null;
- function move(e){var z=sc(key),max=12*z,p=toSvg(e),dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}knob.style.transition='none';knob.style.transform='translate('+(dx/z).toFixed(1)+'px,'+(dy/z).toFixed(1)+'px)';}
- function reset(){id=null;knob.style.transition='transform .14s ease-out';knob.style.transform='translate(0px,0px)';}
+ function move(e){var z=sc(key),max=12*z,p=toSvg(e),dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}knob.style.transition='none';knob.style.transform='translate('+(dx/z).toFixed(1)+'px,'+(dy/z).toFixed(1)+'px)';dirs(key,dx/max,dy/max);}
+ function reset(){id=null;knob.style.transition='transform .14s ease-out';knob.style.transform='translate(0px,0px)';dirs(key,0,0);}
  s.addEventListener('pointerdown',function(e){e.preventDefault();if(id!==null)return;id=e.pointerId;try{s.setPointerCapture(id);}catch(x){}move(e);});
  s.addEventListener('pointermove',function(e){if(e.pointerId===id)move(e);});
  ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){s.addEventListener(t,function(e){if(e.pointerId===id)reset();});});
@@ -180,5 +194,62 @@ try{var q=parseInt(localStorage.getItem('dgNeonLvl'),10);if(q>=0&&q<=100)nl=q;}c
 function applyNeon(){nb.value=nl;nv.textContent=nl+'%';svg.style.setProperty('--neon',(nl/100).toFixed(2));svg.classList.toggle('noneon',nl===0);}
 applyNeon();
 nb.addEventListener('input',function(){nl=+nb.value;applyNeon();try{localStorage.setItem('dgNeonLvl',String(nl));}catch(x){}});
+
+var KEYLIST=[['none','Koi nahi','']];
+'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(function(c){KEYLIST.push(['Key'+c,c,c.toLowerCase()]);});
+'0123456789'.split('').forEach(function(c){KEYLIST.push(['Digit'+c,c,c]);});
+[['ArrowUp','Up arrow'],['ArrowDown','Down arrow'],['ArrowLeft','Left arrow'],['ArrowRight','Right arrow'],['Enter','Enter'],['Space','Space'],['ShiftLeft','Shift'],['ControlLeft','Ctrl'],['AltLeft','Alt'],['Tab','Tab'],['Escape','Esc'],['Backspace','Backspace']].forEach(function(a){KEYLIST.push([a[0],a[1],a[0]]);});
+var KOPT={};KEYLIST.forEach(function(k){KOPT[k[0]]={label:k[1],key:k[2]};});
+var KDEF={CROSS:'KeyZ',CIRCLE:'KeyX',SQUARE:'KeyA',TRIANGLE:'KeyS',L1:'KeyQ',R1:'KeyE',L2:'Digit1',R2:'Digit2',UP:'ArrowUp',DOWN:'ArrowDown',LEFT:'ArrowLeft',RIGHT:'ArrowRight',OPTIONS:'Enter',CREATE:'Backspace',PS:'Escape',TOUCHPAD:'KeyT',LS_U:'KeyW',LS_D:'KeyS',LS_L:'KeyA',LS_R:'KeyD',RS_U:'KeyI',RS_D:'KeyK',RS_L:'KeyJ',RS_R:'KeyL'};
+var KNAME=[['CROSS','Cross'],['CIRCLE','Circle'],['SQUARE','Square'],['TRIANGLE','Triangle'],['L1','L1'],['L2','L2'],['R1','R1'],['R2','R2'],['UP','D-Pad up'],['DOWN','D-Pad down'],['LEFT','D-Pad left'],['RIGHT','D-Pad right'],['LS_U','Left stick up'],['LS_D','Left stick down'],['LS_L','Left stick left'],['LS_R','Left stick right'],['RS_U','Right stick up'],['RS_D','Right stick down'],['RS_L','Right stick left'],['RS_R','Right stick right'],['OPTIONS','Options'],['CREATE','Create'],['PS','PS button'],['TOUCHPAD','Touchpad']];
+var KM={};
+Object.keys(KDEF).forEach(function(k){KM[k]=KDEF[k];});
+try{var sk=JSON.parse(localStorage.getItem('dgKeys')||'{}');Object.keys(sk).forEach(function(k){if(KOPT[sk[k]]&&k in KDEF)KM[k]=sk[k];});}catch(x){}
+function saveK(){try{localStorage.setItem('dgKeys',JSON.stringify(KM));}catch(x){}}
+var kdown={},ktest=document.getElementById('ktest'),kbox=document.getElementById('keytest'),kshow=false;
+try{kshow=localStorage.getItem('dgKtest')==='1';}catch(x){}
+ktest.checked=kshow;
+function kdraw(){
+ var names=[];Object.keys(kdown).forEach(function(id){if(kdown[id]&&KM[id]&&KM[id]!=='none')names.push(KOPT[KM[id]].label);});
+ kbox.hidden=!kshow;kbox.textContent='Key: '+(names.length?names.join(' + '):'-');
+}
+function setKey(id,on){
+ on=!!on;if(!!kdown[id]===on)return;kdown[id]=on;
+ var code=KM[id];if(code&&code!=='none'){
+  var d={type:on?'keydown':'keyup',id:id,key:KOPT[code].key,code:code};
+  try{window.dispatchEvent(new CustomEvent('dgkey',{detail:d}));}catch(x){}
+  if(typeof window.dgSend==='function'){try{window.dgSend(d);}catch(x){}}
+ }
+ kdraw();
+}
+function dirs(key,nx,ny){var p=key==='LS'?'LS_':'RS_';setKey(p+'U',ny<-0.5);setKey(p+'D',ny>0.5);setKey(p+'L',nx<-0.5);setKey(p+'R',nx>0.5);}
+document.querySelectorAll('.b').forEach(function(el){
+ var id=el.dataset.id;
+ el.addEventListener('pointerdown',function(){setKey(id,true);});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){el.addEventListener(t,function(){setKey(id,false);});});
+});
+ktest.addEventListener('change',function(){kshow=ktest.checked;try{localStorage.setItem('dgKtest',kshow?'1':'0');}catch(x){}kdraw();});
+var krows=document.getElementById('keyrows'),ksel={};
+KNAME.forEach(function(r){
+ var row=document.createElement('div');row.className='krow';
+ var lab=document.createElement('label');lab.textContent=r[1];
+ var sel=document.createElement('select');sel.id='k-'+r[0];lab.htmlFor=sel.id;
+ KEYLIST.forEach(function(k){var o=document.createElement('option');o.value=k[0];o.textContent=k[1];sel.appendChild(o);});
+ sel.value=KM[r[0]];
+ sel.addEventListener('change',function(){KM[r[0]]=sel.value;saveK();});
+ ksel[r[0]]=sel;row.appendChild(lab);row.appendChild(sel);krows.appendChild(row);
+});
+document.getElementById('keyreset').addEventListener('click',function(){Object.keys(KDEF).forEach(function(k){KM[k]=KDEF[k];if(ksel[k])ksel[k].value=KDEF[k];});saveK();});
+kdraw();
+
+var tpEl=document.querySelector('[data-id="TOUCHPAD"]'),dot=document.getElementById('tpdot'),tpHold=null;
+function tpMove(e){var q=svg.createSVGPoint();q.x=e.clientX;q.y=e.clientY;q=q.matrixTransform(dot.parentNode.getScreenCTM().inverse());dot.setAttribute('cx',Math.max(231,Math.min(369,q.x)).toFixed(1));dot.setAttribute('cy',Math.max(68,Math.min(118,q.y)).toFixed(1));}
+tpEl.addEventListener('pointerdown',function(e){tpHold=e.pointerId;tpMove(e);dot.style.opacity='.9';});
+tpEl.addEventListener('pointermove',function(e){if(e.pointerId===tpHold)tpMove(e);});
+['pointerup','pointercancel','lostpointercapture'].forEach(function(t){tpEl.addEventListener(t,function(e){if(e.pointerId===tpHold||t==='lostpointercapture'){tpHold=null;dot.style.opacity='0';}});});
+var pu=document.getElementById('pulse'),pulseOn=true;
+try{pulseOn=localStorage.getItem('dgPulse')!=='0';}catch(x){}
+pu.checked=pulseOn;svg.classList.toggle('nopulse',!pulseOn);
+pu.addEventListener('change',function(){pulseOn=pu.checked;svg.classList.toggle('nopulse',!pulseOn);try{localStorage.setItem('dgPulse',pulseOn?'1':'0');}catch(x){}});
 })();
 </script>
