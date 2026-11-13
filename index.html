@@ -21,8 +21,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 .lbl{fill:#D3D1C7}
 .sym{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 </style>
-<style>#fs{position:fixed;top:8px;right:8px;z-index:5;background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif}#fs[hidden]{display:none}</style>
-<button id="fs" type="button">Fullscreen</button>
+<style>#ui{position:fixed;top:8px;right:8px;z-index:5;display:flex;gap:6px}#ui button{position:static;background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif}#pad{transform-origin:center center}#fsOLD{background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif}#fs[hidden]{display:none}</style>
+<div id="ui"><button id="sm" type="button" aria-label="Chhota">&minus;</button><button id="bg" type="button" aria-label="Bada">+</button><button id="fs" type="button">Fullscreen</button></div>
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
 <g class="b" data-id="L2"><rect class="f" x="100" y="4" width="90" height="20" rx="10"/><text x="145" y="14">L2</text></g>
@@ -83,5 +83,15 @@ b.addEventListener('click',function(){
 });
 function sync(){b.hidden=!!fsOn();}
 document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
+})();
+</script>
+<script>
+(function(){
+var pad=document.getElementById('pad'),k=1;
+try{var v=parseFloat(localStorage.getItem('dgSize'));if(v>=0.5&&v<=1.15)k=v;}catch(x){}
+function ap(){pad.style.transform='scale('+k.toFixed(2)+')';try{localStorage.setItem('dgSize',k.toFixed(2));}catch(x){}}
+document.getElementById('sm').addEventListener('click',function(){k=Math.max(0.5,Math.round((k-0.05)*100)/100);ap();});
+document.getElementById('bg').addEventListener('click',function(){k=Math.min(1.15,Math.round((k+0.05)*100)/100);ap();});
+ap();
 })();
 </script>
