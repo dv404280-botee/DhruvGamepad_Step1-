@@ -1,8 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
-<meta name="mobile-web-app-capable" content="yes">
 <title>Dhruv Gamepad</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
@@ -23,6 +21,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 .lbl{fill:#D3D1C7}
 .sym{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 </style>
+<style>#fs{position:fixed;top:8px;right:8px;z-index:5;background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif}#fs[hidden]{display:none}</style>
+<button id="fs" type="button">Fullscreen</button>
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
 <g class="b" data-id="L2"><rect class="f" x="100" y="4" width="90" height="20" rx="10"/><text x="145" y="14">L2</text></g>
@@ -70,4 +70,18 @@ document.querySelectorAll('.stick').forEach(function(s){
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
 })();
 </script>
-<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<script>
+(function(){
+if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});}).catch(function(){});}
+if(window.caches){caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});}).catch(function(){});}
+var b=document.getElementById('fs'),el=document.documentElement;
+function fsOn(){return document.fullscreenElement||document.webkitFullscreenElement;}
+b.addEventListener('click',function(){
+ var f=el.requestFullscreen||el.webkitRequestFullscreen;
+ if(!f){b.textContent='Fullscreen nahi chalta';return;}
+ try{var p=f.call(el);if(p&&p.then){p.then(function(){try{screen.orientation.lock('landscape').catch(function(){});}catch(x){}}).catch(function(){b.textContent='Fullscreen nahi chalta';});}}catch(x){}
+});
+function sync(){b.hidden=!!fsOn();}
+document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
+})();
+</script>
