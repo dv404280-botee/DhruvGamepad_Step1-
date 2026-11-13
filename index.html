@@ -10,8 +10,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 #pad{width:100%;flex:1;min-height:0;display:block;transform-origin:center center}
 #rot{display:none;font-size:13px;color:#B4B2A9;text-align:center;padding:8px 0}
 @media (orientation:portrait){#rot{display:block}}
-.b{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:transform .08s ease-out}
-.b.on{transform:scale(.93)}
+.b{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.b.on{transform:scale(.88);transition-duration:.05s}
+.b[data-id="L1"].on,.b[data-id="L2"].on,.b[data-id="R1"].on,.b[data-id="R2"].on{transform:translateY(1.5px) scale(.97)}
+.b.on .f{stroke:#8FCBFF}
+@keyframes pop{from{opacity:0;transform:scale(.6)}}
+#pad.enter .b{animation:pop .4s cubic-bezier(.34,1.56,.64,1) backwards}
+@keyframes rip{from{opacity:.85;transform:scale(.3)}to{opacity:0;transform:scale(1.7)}}
+#rip.go{animation:rip .35s ease-out}
+@media (prefers-reduced-motion:reduce){#pad.enter .b{animation:none}#rip.go{animation:none}}
 .b.dp.on{transform:none}
 .knob{will-change:transform}
 .stick>circle{transition:stroke .12s}
@@ -26,7 +33,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .pad{fill:#0B1322;stroke:var(--edge);stroke-width:1.5}
 .b.on .f{fill:var(--down)}
 .b.on .f[style]{fill:#3A4355}
-.b.on .pad{fill:#14274A}
+.b.on .pad{fill:#14274A;stroke:#8FCBFF}
 text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .lbl{fill:#D3D1C7}
 .sym{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
@@ -46,6 +53,23 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 #kbbar[hidden]{display:none}
 #kbbar input{flex:1;min-width:0;background:#060910;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:10px 12px;font:16px system-ui,sans-serif;user-select:text;-webkit-user-select:text;touch-action:manipulation}
 #kbbar button{background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif}
+#home{position:fixed;top:0;right:0;bottom:0;left:0;z-index:20;background:#000;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+#home[hidden]{display:none}
+.hwrap{max-width:760px;margin:0 auto;padding:18px max(16px,env(safe-area-inset-left,0px)) 28px}
+.hhead{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.hhead svg{width:44px;height:44px;flex:none}
+.hhead h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.5px}
+.hhead p{margin:0;font-size:13px;color:#7FB4F0}
+#home h2{margin:16px 0 8px;font-size:15px;font-weight:600;color:#B4B2A9}
+#glist{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.gcard{display:flex;align-items:stretch;background:#0A111F;border:1px solid #2F7FD6;border-radius:14px;overflow:hidden}
+.gcard button{background:transparent;color:#E6E8EE;border:0;font:16px system-ui,sans-serif;padding:16px}
+.gcard .gopen{flex:1;text-align:left;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gcard .gdel{flex:none;color:#7FB4F0;padding:0 16px;border-left:1px solid #1E4F8F}
+.gadd{display:flex;gap:8px;margin-top:14px}
+.gadd input{flex:1;min-width:0;background:#060910;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:12px;font:16px system-ui,sans-serif;user-select:text;-webkit-user-select:text}
+.gadd button{background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:12px 16px;font:15px system-ui,sans-serif}
+#gmsg{min-height:18px;margin:8px 0 0;font-size:13px;color:#FF8A8A}
 .hint{margin:6px 0 0;font-size:12px;color:#7FB4F0}
 .row{display:grid;grid-template-columns:92px 1fr 46px;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #1F232B;font-size:14px}
 .row input{width:100%;min-width:0;touch-action:pan-y}
@@ -56,7 +80,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <div id="ui"><button id="gear" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#E6E8EE" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button></div>
 <div id="corner" hidden></div>
 <div id="panel" hidden>
-<h2>Settings</h2>
+<h2 id="ptitle">Settings</h2>
+<button id="homebtn" type="button">Home (games ki list)</button>
 <div class="quick"><button id="fs" type="button">Fullscreen</button><button id="sm" type="button" aria-label="Chhota">&minus;</button><button id="bg" type="button" aria-label="Bada">+</button></div>
 <label class="tg"><input type="checkbox" id="vib" checked> Vibration (button dabane par)</label>
 <label class="tg"><input type="checkbox" id="awake" checked> Screen on rakho (band na ho)</label>
@@ -69,6 +94,13 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <button id="kbopen" type="button">Keyboard kholo (mobile)</button>
 <div class="acts"><button id="reset" type="button">Reset</button><button id="close" type="button">Band karo</button></div>
 </div>
+<div id="home"><div class="hwrap">
+<div class="hhead"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#2A0A0C" stroke="#FF2D2D" stroke-width="1.8"/><path d="M8.6,7.2 H12 C15.6,7.2 17.2,9.4 17.2,12 C17.2,14.6 15.6,16.8 12,16.8 H8.6 Z" fill="none" stroke="#FF2D2D" stroke-width="1.8" stroke-linejoin="round"/></svg><div><h1>Dhruv Gamepad</h1><p>PS5 Edition</p></div></div>
+<h2>Mere games (har game ki apni settings)</h2>
+<div id="glist"></div>
+<div class="gadd"><input id="gname" type="text" placeholder="Game ka naam, jaise BGMI" maxlength="24" autocomplete="off"><button id="gsave" type="button">Game jodo</button></div>
+<p id="gmsg"></p>
+</div></div>
 <div id="kbbar" hidden><input id="kbtext" type="text" placeholder="Yahan likho" autocomplete="off" autocapitalize="off" spellcheck="false"><button id="kbclear" type="button">Saaf</button><button id="kbclose" type="button">Band</button></div>
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
@@ -107,6 +139,7 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <g fill="#1E5FAF"><circle cx="286" cy="198" r="1.3"/><circle cx="292" cy="199" r="1.3"/><circle cx="298" cy="199.5" r="1.3"/><circle cx="304" cy="199.5" r="1.3"/><circle cx="310" cy="199" r="1.3"/><circle cx="316" cy="198" r="1.3"/></g>
 <g class="item" data-k="CR" data-cx="197" data-cy="105"><g class="b" data-id="CREATE"><rect class="f" x="185" y="92" width="24" height="12" rx="6"/></g><path d="M192,98 H202" stroke="#7FB4F0" stroke-width="1.5" stroke-linecap="round" pointer-events="none"/><text class="lbl" x="197" y="118" style="font-size:10px">Create</text></g>
 <g class="item" data-k="OP" data-cx="403" data-cy="105"><g class="b" data-id="OPTIONS"><rect class="f" x="391" y="92" width="24" height="12" rx="6"/></g><path d="M398,95.5 H408 M398,98 H408 M398,100.5 H408" stroke="#7FB4F0" stroke-width="1.2" stroke-linecap="round" pointer-events="none"/><text class="lbl" x="403" y="118" style="font-size:10px">Options</text></g>
+<circle id="rip" cx="0" cy="0" r="12" fill="none" stroke="#8FCBFF" stroke-width="2" pointer-events="none" style="opacity:0;transform-box:fill-box;transform-origin:center"/>
 </svg>
 <script>
 (function(){
@@ -115,7 +148,7 @@ var SZ={},ALL=1;
 try{var a=JSON.parse(localStorage.getItem('dgSizes')||'{}');if(a&&typeof a==='object')SZ=a;var g=parseFloat(localStorage.getItem('dgSize'));if(g>=0.5&&g<=1.15)ALL=g;}catch(x){}
 var items={};
 document.querySelectorAll('.item').forEach(function(el){items[el.dataset.k]=el;});
-function save(){try{localStorage.setItem('dgSizes',JSON.stringify(SZ));localStorage.setItem('dgSize',ALL.toFixed(2));}catch(x){}}
+function save(){try{localStorage.setItem('dgSizes',JSON.stringify(SZ));localStorage.setItem('dgSize',ALL.toFixed(2));}catch(x){}saveGame();}
 function sc(k){var v=SZ[k];return(v>=0.5&&v<=1.5)?v:1;}
 function applyItem(k){var el=items[k],cx=+el.dataset.cx,cy=+el.dataset.cy,s=sc(k);el.setAttribute('transform','translate('+cx+' '+cy+') scale('+s+') translate('+(-cx)+' '+(-cy)+')');}
 function applyAll(){svg.style.transform='scale('+ALL.toFixed(2)+')';}
@@ -190,7 +223,7 @@ var nb=document.getElementById('neon'),nv=document.getElementById('neonv'),nl=20
 try{var q=parseInt(localStorage.getItem('dgNeonLvl'),10);if(q>=0&&q<=100)nl=q;}catch(x){}
 function applyNeon(){nb.value=nl;nv.textContent=nl+'%';svg.style.setProperty('--neon',(nl/100).toFixed(2));svg.classList.toggle('noneon',nl===0);}
 applyNeon();
-nb.addEventListener('input',function(){nl=+nb.value;applyNeon();try{localStorage.setItem('dgNeonLvl',String(nl));}catch(x){}});
+nb.addEventListener('input',function(){nl=+nb.value;applyNeon();try{localStorage.setItem('dgNeonLvl',String(nl));}catch(x){}saveGame();});
 
 
 var tpEl=document.querySelector('[data-id="TOUCHPAD"]'),dot=document.getElementById('tpdot'),tpHold=null;
@@ -212,5 +245,35 @@ function dpApply(){var x=0,y=0,n=0;Object.keys(dpOn).forEach(function(k){if(dpOn
 Object.keys(dpv).forEach(function(k){var el=document.querySelector('[data-id="'+k+'"]');
  el.addEventListener('pointerdown',function(){dpOn[k]=true;dpApply();});
  ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){el.addEventListener(t,function(){dpOn[k]=false;dpApply();});});});
+
+var home=document.getElementById('home'),glist=document.getElementById('glist'),gname=document.getElementById('gname'),gmsg=document.getElementById('gmsg'),ptitle=document.getElementById('ptitle'),GAMES=[],cur=null;
+try{GAMES=JSON.parse(localStorage.getItem('dgGames')||'[]');if(!Array.isArray(GAMES))GAMES=[];}catch(x){GAMES=[];}
+if(!GAMES.length)GAMES=[{id:'g0',name:'Free play',sizes:JSON.parse(JSON.stringify(SZ)),all:ALL,neon:nl}];
+function persistGames(){try{localStorage.setItem('dgGames',JSON.stringify(GAMES));}catch(x){}}
+function findGame(id){for(var i=0;i<GAMES.length;i++)if(GAMES[i].id===id)return GAMES[i];return null;}
+function saveGame(){if(!cur)return;var g=findGame(cur);if(!g)return;g.sizes=JSON.parse(JSON.stringify(SZ));g.all=ALL;g.neon=nl;persistGames();}
+function enter(){svg.classList.add('enter');var bs=svg.querySelectorAll('.b');for(var i=0;i<bs.length;i++)bs[i].style.animationDelay=(i*0.02).toFixed(2)+'s';setTimeout(function(){svg.classList.remove('enter');},800);}
+function openGame(id){var g=findGame(id);if(!g)return;cur=id;try{localStorage.setItem('dgCur',id);}catch(x){}
+ SZ=JSON.parse(JSON.stringify(g.sizes||{}));ALL=(g.all>=0.5&&g.all<=1.15)?g.all:1;nl=(g.neon>=0&&g.neon<=100)?g.neon:20;
+ Object.keys(items).forEach(applyItem);applyAll();applyNeon();showAll();
+ ptitle.textContent='Settings: '+g.name;home.hidden=true;enter();}
+function renderGames(){glist.textContent='';GAMES.forEach(function(g){
+ var c=document.createElement('div');c.className='gcard';
+ var b=document.createElement('button');b.type='button';b.className='gopen';b.textContent=g.name;b.addEventListener('click',function(){openGame(g.id);});c.appendChild(b);
+ if(GAMES.length>1){var d=document.createElement('button'),t=null;d.type='button';d.className='gdel';d.setAttribute('aria-label','Game hatao');d.textContent='\u00d7';
+  d.addEventListener('click',function(){if(t){clearTimeout(t);GAMES=GAMES.filter(function(x){return x.id!==g.id;});if(cur===g.id)cur=null;persistGames();renderGames();return;}d.textContent='Hatao?';t=setTimeout(function(){t=null;d.textContent='\u00d7';},2500);});
+  c.appendChild(d);}
+ glist.appendChild(c);});}
+function addGame(){var n=(gname.value||'').replace(/^\s+|\s+$/g,'');
+ if(!n){gmsg.textContent='Pehle game ka naam likho.';return;}
+ if(GAMES.length>=24){gmsg.textContent='Games zyada ho gaye, koi ek hata do.';return;}
+ GAMES.push({id:'g'+Date.now().toString(36),name:n.slice(0,24),sizes:{},all:1,neon:20});persistGames();gname.value='';gmsg.textContent='';renderGames();}
+document.getElementById('gsave').addEventListener('click',addGame);
+gname.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addGame();}});
+gname.addEventListener('input',function(){gmsg.textContent='';});
+document.getElementById('homebtn').addEventListener('click',function(){saveGame();panel.hidden=true;kb.hidden=true;try{kt.blur();}catch(x){}home.hidden=false;renderGames();});
+var rip=document.getElementById('rip');
+document.querySelectorAll('.b').forEach(function(el){el.addEventListener('pointerdown',function(e){var q=toSvg(e);rip.setAttribute('cx',q.x.toFixed(1));rip.setAttribute('cy',q.y.toFixed(1));rip.classList.remove('go');void rip.getBoundingClientRect();rip.classList.add('go');});});
+renderGames();
 })();
 </script>
