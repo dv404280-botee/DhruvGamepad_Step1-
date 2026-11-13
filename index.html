@@ -14,6 +14,8 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .b.on{transform:scale(.93)}
 .b.dp.on{transform:none}
 .knob{will-change:transform}
+.stick>circle{transition:stroke .12s}
+.stick.held>circle:first-child{stroke:#8FCBFF}
 @keyframes pulse{0%,100%{opacity:calc(var(--neon,.2)*.55)}50%{opacity:var(--neon,.2)}}
 #pad .neon{animation:pulse 3.2s ease-in-out infinite}
 #pad.noneon .neon{display:none}
@@ -88,8 +90,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <path d="M192,54 H408 Q424,54 424,70 V198 Q424,212 410,212 H190 Q176,212 176,198 V70 Q176,54 192,54 Z" fill="url(#gPlate)" stroke="#1E4F8F" stroke-width="1.5"/>
 <g pointer-events="none" transform="translate(300 44) scale(.68) translate(-300 -44)"><circle cx="300" cy="44" r="9.5" fill="#2A0A0C" stroke="#FF2D2D" stroke-width="1.8"/><path d="M296.5,39.2 H300 C304,39.2 305.6,41.6 305.6,44 C305.6,46.4 304,48.8 300,48.8 H296.5 Z" fill="none" stroke="#FF2D2D" stroke-width="1.8" stroke-linejoin="round"/></g>
 <g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93" style="fill:#7FB4F0">Touchpad</text></g><circle id="tpdot" cx="300" cy="93" r="6" fill="#8FCBFF" stroke="#2F7FD6" stroke-width="1.5" pointer-events="none" style="opacity:0;transition:opacity .25s"/><path class="neon" d="M221,68 Q215,93 221,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M221,68 Q215,93 221,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/><path class="neon" d="M379,68 Q385,93 379,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M379,68 Q385,93 379,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
-<g class="item" data-k="DP" data-cx="110" data-cy="105"><circle cx="110" cy="105" r="41" fill="#0A111F" stroke="#1E4F8F" stroke-width="2"/><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="url(#gBtn)" stroke="#2F7FD6" stroke-width="1.5" stroke-linejoin="round"/>
-<polygon points="110,78 105,87 115,87" fill="#7FB4F0"/><polygon points="110,132 105,123 115,123" fill="#7FB4F0"/><polygon points="83,105 92,100 92,110" fill="#7FB4F0"/><polygon points="137,105 128,100 128,110" fill="#7FB4F0"/>
+<g class="item" data-k="DP" data-cx="110" data-cy="105"><circle cx="110" cy="105" r="41" fill="#0A111F" stroke="#1E4F8F" stroke-width="2"/><g id="dpc" style="transform-origin:110px 105px;transition:transform .09s ease-out"><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="url(#gBtn)" stroke="#2F7FD6" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="110,78 105,87 115,87" fill="#7FB4F0"/><polygon points="110,132 105,123 115,123" fill="#7FB4F0"/><polygon points="83,105 92,100 92,110" fill="#7FB4F0"/><polygon points="137,105 128,100 128,110" fill="#7FB4F0"/></g>
 <g class="b dp" data-id="UP"><rect class="f" x="99" y="73" width="22" height="21"/></g>
 <g class="b dp" data-id="DOWN"><rect class="f" x="99" y="116" width="22" height="21"/></g>
 <g class="b dp" data-id="LEFT"><rect class="f" x="78" y="94" width="21" height="22"/></g>
@@ -126,9 +128,9 @@ document.querySelectorAll('.b').forEach(function(el){
 });
 document.querySelectorAll('.stick').forEach(function(s){
  var key=s.parentNode.dataset.k,cx=+s.dataset.cx,cy=+s.dataset.cy,knob=s.querySelector('.knob'),id=null;
- function move(e){var z=sc(key),max=12*z,p=toSvg(e),dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}knob.style.transition='none';knob.style.transform='translate('+(dx/z).toFixed(1)+'px,'+(dy/z).toFixed(1)+'px)';}
- function reset(){id=null;knob.style.transition='transform .14s ease-out';knob.style.transform='translate(0px,0px)';}
- s.addEventListener('pointerdown',function(e){e.preventDefault();if(id!==null)return;id=e.pointerId;try{s.setPointerCapture(id);}catch(x){}move(e);});
+ function move(e){var z=sc(key),max=12*z,p=toSvg(e),dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}knob.style.transition='transform .06s ease-out';knob.style.transform='translate('+(dx/z).toFixed(1)+'px,'+(dy/z).toFixed(1)+'px)';}
+ function reset(){id=null;s.classList.remove('held');knob.style.transition='transform .24s cubic-bezier(.34,1.56,.64,1)';knob.style.transform='translate(0px,0px)';}
+ s.addEventListener('pointerdown',function(e){e.preventDefault();if(id!==null)return;id=e.pointerId;try{s.setPointerCapture(id);}catch(x){}s.classList.add('held');move(e);});
  s.addEventListener('pointermove',function(e){if(e.pointerId===id)move(e);});
  ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){s.addEventListener(t,function(e){if(e.pointerId===id)reset();});});
 });
@@ -205,5 +207,10 @@ document.getElementById('kbopen').addEventListener('click',function(){panel.hidd
 document.getElementById('kbclose').addEventListener('click',function(){kb.hidden=true;try{kt.blur();}catch(x){}});
 document.getElementById('kbclear').addEventListener('click',function(){kt.value='';kt.focus();kt.dispatchEvent(new Event('input'));});
 kt.addEventListener('input',function(){var d={text:kt.value};try{window.dispatchEvent(new CustomEvent('dgtext',{detail:d}));}catch(x){}if(typeof window.dgSendText==='function'){try{window.dgSendText(d);}catch(x){}}});
+var dpc=document.getElementById('dpc'),dpv={UP:[0,-1.6],DOWN:[0,1.6],LEFT:[-1.6,0],RIGHT:[1.6,0]},dpOn={};
+function dpApply(){var x=0,y=0,n=0;Object.keys(dpOn).forEach(function(k){if(dpOn[k]){x+=dpv[k][0];y+=dpv[k][1];n++;}});dpc.style.transform=n?'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) scale(.975)':'translate(0px,0px) scale(1)';}
+Object.keys(dpv).forEach(function(k){var el=document.querySelector('[data-id="'+k+'"]');
+ el.addEventListener('pointerdown',function(){dpOn[k]=true;dpApply();});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){el.addEventListener(t,function(){dpOn[k]=false;dpApply();});});});
 })();
 </script>
