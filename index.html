@@ -4,7 +4,7 @@
 <title>Dhruv Gamepad</title>
 <style>
 /* Layout: one full-screen landscape controller (600x290 drawing) centred on black. Settings panel sizes each control. */
-:root{--bg:#000;--edge:#5A6070;--btn:#2E323D;--down:#4A5060;--pad:#14161C;--text:#E6E8EE;color-scheme:dark}
+:root{--bg:#000;--edge:#2F7FD6;--btn:#1E4F8F;--down:#2A5FA8;--pad:#0A111F;--text:#E6E8EE;color-scheme:dark}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center}
 #pad{width:100%;flex:1;min-height:0;display:block;transform-origin:center center}
@@ -14,36 +14,36 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 .b.on{transform:scale(.93)}
 .b.dp.on{transform:none}
 .knob{will-change:transform}
-@keyframes pulse{0%,100%{opacity:.35}50%{opacity:.8}}
+@keyframes pulse{0%,100%{opacity:calc(var(--neon,.2)*.55)}50%{opacity:var(--neon,.2)}}
 #pad .neon{animation:pulse 3.2s ease-in-out infinite}
 #pad.noneon .neon{display:none}
-@media (prefers-reduced-motion:reduce){#pad .neon{animation:none;opacity:.55}}
+@media (prefers-reduced-motion:reduce){#pad .neon{animation:none;opacity:var(--neon,.2)}}
 .f{fill:url(#gBtn);stroke:var(--edge);stroke-width:1.5}
 .dp .f{fill:transparent;stroke:none}
-.pad{fill:#1A1D25;stroke:var(--edge);stroke-width:1.5}
+.pad{fill:#0B1322;stroke:var(--edge);stroke-width:1.5}
 .b.on .f{fill:var(--down)}
 .b.on .f[style]{fill:#3A4355}
-.b.on .pad{fill:#1E222B}
+.b.on .pad{fill:#14274A}
 text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .lbl{fill:#D3D1C7}
 .sym{fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
 #ui{position:fixed;top:8px;right:8px;z-index:7;display:flex;gap:6px}
-#ui button{background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif;min-height:44px}
+#ui button{background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif;min-height:44px}
 #ui svg{display:block;width:20px;height:20px}
 #gear[hidden],#corner[hidden],#panel[hidden]{display:none}
 #corner{position:fixed;top:0;right:0;width:72px;height:72px;z-index:7}
-#panel{position:fixed;top:60px;right:8px;bottom:8px;width:min(330px,62vw);z-index:6;background:#0D0F14;border:1px solid #5A6070;border-radius:14px;padding:12px 14px;overflow-y:auto;touch-action:pan-y;box-sizing:border-box}
+#panel{position:fixed;top:60px;right:8px;bottom:8px;width:min(330px,62vw);z-index:6;background:#0D0F14;border:1px solid #2F7FD6;border-radius:14px;padding:12px 14px;overflow-y:auto;touch-action:pan-y;box-sizing:border-box}
 #panel h2{margin:0 0 8px;font-size:16px;font-weight:600}
 #panel h3{margin:12px 0 4px;font-size:14px;font-weight:600;color:#B4B2A9}
 .quick{display:flex;gap:8px;margin-bottom:6px}.quick button{flex:1}.quick #fs{flex:3}
 .tg{display:flex;gap:10px;align-items:center;padding:8px 0;font-size:14px}.tg input{width:22px;height:22px;flex:none}
 #hideGear{width:100%;margin-top:4px}
-.hint{margin:6px 0 0;font-size:12px;color:#8A8D99}
+.hint{margin:6px 0 0;font-size:12px;color:#7FB4F0}
 .row{display:grid;grid-template-columns:92px 1fr 46px;align-items:center;gap:8px;padding:6px 0;border-top:1px solid #1F232B;font-size:14px}
 .row input{width:100%;min-width:0;touch-action:pan-y}
 .row span.v{text-align:right;color:#B4B2A9;font-variant-numeric:tabular-nums}
 #panel .acts{display:flex;gap:8px;margin-top:10px}
-#panel button{flex:1;background:#14161C;color:#E6E8EE;border:1px solid #5A6070;border-radius:10px;padding:10px;font:14px system-ui,sans-serif}
+#panel button{flex:1;background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:10px;font:14px system-ui,sans-serif}
 </style>
 <div id="ui"><button id="gear" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#E6E8EE" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button></div>
 <div id="corner" hidden></div>
@@ -52,7 +52,7 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <div class="quick"><button id="fs" type="button">Fullscreen</button><button id="sm" type="button" aria-label="Chhota">&minus;</button><button id="bg" type="button" aria-label="Bada">+</button></div>
 <label class="tg"><input type="checkbox" id="vib" checked> Vibration (button dabane par)</label>
 <label class="tg"><input type="checkbox" id="awake" checked> Screen on rakho (band na ho)</label>
-<label class="tg"><input type="checkbox" id="neon" checked> Neon blue light</label>
+<div class="row"><label for="neon">Neon light</label><input type="range" id="neon" min="0" max="100" step="5" value="20"><span class="v" id="neonv">20%</span></div>
 <button id="hideGear" type="button">Settings icon chhupao</button>
 <p class="hint">Chhupane ke baad wapas lane ke liye upar dayein kone mein 3 baar jaldi tap karo.</p>
 <h3>Size (har button ka)</h3>
@@ -62,40 +62,40 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
 <defs>
-<linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E323D"/><stop offset="1" stop-color="#171A21"/></linearGradient>
-<linearGradient id="gBtn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3E4350"/><stop offset="1" stop-color="#252932"/></linearGradient>
-<linearGradient id="gPlate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1C1F27"/><stop offset="1" stop-color="#12141A"/></linearGradient>
-<radialGradient id="gCap" cx="0.4" cy="0.35" r="0.8"><stop offset="0" stop-color="#2C303A"/><stop offset="1" stop-color="#0A0B0F"/></radialGradient>
+<linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15213B"/><stop offset="1" stop-color="#080C16"/></linearGradient>
+<linearGradient id="gBtn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1F3358"/><stop offset="1" stop-color="#0E1829"/></linearGradient>
+<linearGradient id="gPlate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E1627"/><stop offset="1" stop-color="#080C16"/></linearGradient>
+<radialGradient id="gCap" cx="0.4" cy="0.35" r="0.8"><stop offset="0" stop-color="#1D2F50"/><stop offset="1" stop-color="#060910"/></radialGradient>
 <filter id="blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="3"/></filter>
 <filter id="blur2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2"/></filter>
 </defs>
 <g class="item" data-k="L2" data-cx="145" data-cy="14"><g class="b" data-id="L2"><rect class="f" x="100" y="4" width="90" height="20" rx="10"/><text x="145" y="14">L2</text></g></g>
-<g class="item" data-k="L1" data-cx="145" data-cy="33"><g class="b" data-id="L1"><rect class="f" x="96" y="26" width="98" height="14" rx="7"/></g><text x="145" y="33" style="font-size:10px;fill:#8A8D99">L1</text></g>
+<g class="item" data-k="L1" data-cx="145" data-cy="33"><g class="b" data-id="L1"><rect class="f" x="96" y="26" width="98" height="14" rx="7"/></g><text x="145" y="33" style="font-size:10px;fill:#7FB4F0">L1</text></g>
 <g class="item" data-k="R2" data-cx="455" data-cy="14"><g class="b" data-id="R2"><rect class="f" x="410" y="4" width="90" height="20" rx="10"/><text x="455" y="14">R2</text></g></g>
-<g class="item" data-k="R1" data-cx="455" data-cy="33"><g class="b" data-id="R1"><rect class="f" x="406" y="26" width="98" height="14" rx="7"/></g><text x="455" y="33" style="font-size:10px;fill:#8A8D99">R1</text></g>
-<path class="neon" d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="none" stroke="#2D8CFF" stroke-width="5" filter="url(#blur)"/>
-<path d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="url(#gBody)" stroke="#555B6B" stroke-width="2.5"/>
-<path d="M176,47 C242,32 358,32 424,47" fill="none" stroke="#6A7184" stroke-width="1" opacity=".6" stroke-linecap="round"/>
-<path d="M192,54 H408 Q424,54 424,70 V198 Q424,212 410,212 H190 Q176,212 176,198 V70 Q176,54 192,54 Z" fill="url(#gPlate)" stroke="#262A33" stroke-width="1.5"/>
-<g pointer-events="none"><text x="300" y="44" filter="url(#blur2)" style="font-size:11px;font-weight:800;letter-spacing:3px;fill:#FF2D2D;opacity:.55">DHRUV</text><text x="300" y="44" style="font-size:11px;font-weight:800;letter-spacing:3px;fill:#FF2D2D">DHRUV</text></g>
-<g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93" style="fill:#8A8D99">Touchpad</text></g><path class="neon" d="M221,68 Q215,93 221,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M221,68 Q215,93 221,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/><path class="neon" d="M379,68 Q385,93 379,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M379,68 Q385,93 379,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
-<g class="item" data-k="DP" data-cx="110" data-cy="105"><circle cx="110" cy="105" r="41" fill="#14161C" stroke="#2E323D" stroke-width="2"/><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="url(#gBtn)" stroke="#5A6070" stroke-width="1.5" stroke-linejoin="round"/>
-<polygon points="110,78 105,87 115,87" fill="#8A8D99"/><polygon points="110,132 105,123 115,123" fill="#8A8D99"/><polygon points="83,105 92,100 92,110" fill="#8A8D99"/><polygon points="137,105 128,100 128,110" fill="#8A8D99"/>
+<g class="item" data-k="R1" data-cx="455" data-cy="33"><g class="b" data-id="R1"><rect class="f" x="406" y="26" width="98" height="14" rx="7"/></g><text x="455" y="33" style="font-size:10px;fill:#7FB4F0">R1</text></g>
+<path class="neon" d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="none" stroke="#2D8CFF" stroke-width="4" filter="url(#blur)"/>
+<path d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="url(#gBody)" stroke="#2F7FD6" stroke-width="2.5"/>
+<path d="M176,47 C242,32 358,32 424,47" fill="none" stroke="#8FCBFF" stroke-width="1" opacity=".6" stroke-linecap="round"/>
+<path d="M192,54 H408 Q424,54 424,70 V198 Q424,212 410,212 H190 Q176,212 176,198 V70 Q176,54 192,54 Z" fill="url(#gPlate)" stroke="#1E4F8F" stroke-width="1.5"/>
+<g pointer-events="none"><circle cx="300" cy="44" r="9.5" fill="#2A0A0C" stroke="#FF2D2D" stroke-width="1.8"/><path d="M296.5,39.2 H300 C304,39.2 305.6,41.6 305.6,44 C305.6,46.4 304,48.8 300,48.8 H296.5 Z" fill="none" stroke="#FF2D2D" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93" style="fill:#7FB4F0">Touchpad</text></g><path class="neon" d="M221,68 Q215,93 221,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M221,68 Q215,93 221,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/><path class="neon" d="M379,68 Q385,93 379,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M379,68 Q385,93 379,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
+<g class="item" data-k="DP" data-cx="110" data-cy="105"><circle cx="110" cy="105" r="41" fill="#0A111F" stroke="#1E4F8F" stroke-width="2"/><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="url(#gBtn)" stroke="#2F7FD6" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="110,78 105,87 115,87" fill="#7FB4F0"/><polygon points="110,132 105,123 115,123" fill="#7FB4F0"/><polygon points="83,105 92,100 92,110" fill="#7FB4F0"/><polygon points="137,105 128,100 128,110" fill="#7FB4F0"/>
 <g class="b dp" data-id="UP"><rect class="f" x="99" y="73" width="22" height="21"/></g>
 <g class="b dp" data-id="DOWN"><rect class="f" x="99" y="116" width="22" height="21"/></g>
 <g class="b dp" data-id="LEFT"><rect class="f" x="78" y="94" width="21" height="22"/></g>
 <g class="b dp" data-id="RIGHT"><rect class="f" x="121" y="94" width="21" height="22"/></g></g>
-<g class="item" data-k="TRI" data-cx="490" data-cy="75"><circle cx="490" cy="75" r="17" fill="#14161C" stroke="#2E323D" stroke-width="1.5"/><g class="b" data-id="TRIANGLE"><circle class="f" cx="490" cy="75" r="14"/><path class="sym" d="M490,69.5 L496,78.5 L484,78.5 Z" stroke="#5DCAA5"/></g></g>
-<g class="item" data-k="CIR" data-cx="520" data-cy="105"><circle cx="520" cy="105" r="17" fill="#14161C" stroke="#2E323D" stroke-width="1.5"/><g class="b" data-id="CIRCLE"><circle class="f" cx="520" cy="105" r="14"/><circle class="sym" cx="520" cy="105" r="6" stroke="#F09595"/></g></g>
-<g class="item" data-k="CRO" data-cx="490" data-cy="135"><circle cx="490" cy="135" r="17" fill="#14161C" stroke="#2E323D" stroke-width="1.5"/><g class="b" data-id="CROSS"><circle class="f" cx="490" cy="135" r="14"/><path class="sym" d="M484,129 L496,141 M496,129 L484,141" stroke="#85B7EB"/></g></g>
-<g class="item" data-k="SQU" data-cx="460" data-cy="105"><circle cx="460" cy="105" r="17" fill="#14161C" stroke="#2E323D" stroke-width="1.5"/><g class="b" data-id="SQUARE"><circle class="f" cx="460" cy="105" r="14"/><rect class="sym" x="454" y="99" width="12" height="12" stroke="#ED93B1"/></g></g>
-<g class="item" data-k="LS" data-cx="215" data-cy="168"><g class="stick" data-cx="215" data-cy="168"><circle cx="215" cy="168" r="35" fill="#14161C" stroke="#4A5060" stroke-width="2"/><circle cx="215" cy="168" r="30" fill="none" stroke="#3A3F4C" stroke-width="3" stroke-dasharray="1.5 3"/><g class="knob"><circle cx="215" cy="168" r="23" fill="url(#gCap)" stroke="#5A6070" stroke-width="1.5"/><circle cx="215" cy="168" r="15" fill="none" stroke="#2E323D" stroke-width="2"/><circle cx="215" cy="168" r="4" fill="#0A0B0F" stroke="#3A3F4C" stroke-width="1"/></g></g></g>
-<g class="item" data-k="RS" data-cx="385" data-cy="168"><g class="stick" data-cx="385" data-cy="168"><circle cx="385" cy="168" r="35" fill="#14161C" stroke="#4A5060" stroke-width="2"/><circle cx="385" cy="168" r="30" fill="none" stroke="#3A3F4C" stroke-width="3" stroke-dasharray="1.5 3"/><g class="knob"><circle cx="385" cy="168" r="23" fill="url(#gCap)" stroke="#5A6070" stroke-width="1.5"/><circle cx="385" cy="168" r="15" fill="none" stroke="#2E323D" stroke-width="2"/><circle cx="385" cy="168" r="4" fill="#0A0B0F" stroke="#3A3F4C" stroke-width="1"/></g></g></g>
+<g class="item" data-k="TRI" data-cx="490" data-cy="75"><circle cx="490" cy="75" r="17" fill="#0A111F" stroke="#1E4F8F" stroke-width="1.5"/><g class="b" data-id="TRIANGLE"><circle class="f" cx="490" cy="75" r="14"/><path class="sym" d="M490,69.5 L496,78.5 L484,78.5 Z" stroke="#5DCAA5"/></g></g>
+<g class="item" data-k="CIR" data-cx="520" data-cy="105"><circle cx="520" cy="105" r="17" fill="#0A111F" stroke="#1E4F8F" stroke-width="1.5"/><g class="b" data-id="CIRCLE"><circle class="f" cx="520" cy="105" r="14"/><circle class="sym" cx="520" cy="105" r="6" stroke="#F09595"/></g></g>
+<g class="item" data-k="CRO" data-cx="490" data-cy="135"><circle cx="490" cy="135" r="17" fill="#0A111F" stroke="#1E4F8F" stroke-width="1.5"/><g class="b" data-id="CROSS"><circle class="f" cx="490" cy="135" r="14"/><path class="sym" d="M484,129 L496,141 M496,129 L484,141" stroke="#85B7EB"/></g></g>
+<g class="item" data-k="SQU" data-cx="460" data-cy="105"><circle cx="460" cy="105" r="17" fill="#0A111F" stroke="#1E4F8F" stroke-width="1.5"/><g class="b" data-id="SQUARE"><circle class="f" cx="460" cy="105" r="14"/><rect class="sym" x="454" y="99" width="12" height="12" stroke="#ED93B1"/></g></g>
+<g class="item" data-k="LS" data-cx="215" data-cy="168"><g class="stick" data-cx="215" data-cy="168"><circle cx="215" cy="168" r="35" fill="#0A111F" stroke="#2D8CFF" stroke-width="2"/><circle cx="215" cy="168" r="30" fill="none" stroke="#1E5FAF" stroke-width="3" stroke-dasharray="1.5 3"/><g class="knob"><circle cx="215" cy="168" r="23" fill="url(#gCap)" stroke="#2F7FD6" stroke-width="1.5"/><circle cx="215" cy="168" r="15" fill="none" stroke="#1E4F8F" stroke-width="2"/><circle cx="215" cy="168" r="4" fill="#0A0B0F" stroke="#1E5FAF" stroke-width="1"/></g></g></g>
+<g class="item" data-k="RS" data-cx="385" data-cy="168"><g class="stick" data-cx="385" data-cy="168"><circle cx="385" cy="168" r="35" fill="#0A111F" stroke="#2D8CFF" stroke-width="2"/><circle cx="385" cy="168" r="30" fill="none" stroke="#1E5FAF" stroke-width="3" stroke-dasharray="1.5 3"/><g class="knob"><circle cx="385" cy="168" r="23" fill="url(#gCap)" stroke="#2F7FD6" stroke-width="1.5"/><circle cx="385" cy="168" r="15" fill="none" stroke="#1E4F8F" stroke-width="2"/><circle cx="385" cy="168" r="4" fill="#0A0B0F" stroke="#1E5FAF" stroke-width="1"/></g></g></g>
 <g class="item" data-k="PS" data-cx="300" data-cy="150"><circle class="neon" cx="300" cy="150" r="14" fill="none" stroke="#2D8CFF" stroke-width="4" filter="url(#blur2)"/><g class="b" data-id="PS"><circle class="f" cx="300" cy="150" r="12" style="stroke:#4DA3FF;stroke-width:2"/><text x="300" y="150" style="font-weight:700;font-size:10px">PS</text></g></g>
 <g class="item" data-k="MU" data-cx="300" data-cy="180"><g class="b" data-id="MUTE"><rect class="f" x="288" y="176" width="24" height="9" rx="4.5"/></g><circle cx="300" cy="180.5" r="1.8" fill="#F5A524"/></g>
-<g fill="#3A3F4C"><circle cx="286" cy="198" r="1.3"/><circle cx="292" cy="199" r="1.3"/><circle cx="298" cy="199.5" r="1.3"/><circle cx="304" cy="199.5" r="1.3"/><circle cx="310" cy="199" r="1.3"/><circle cx="316" cy="198" r="1.3"/></g>
-<g class="item" data-k="CR" data-cx="197" data-cy="105"><g class="b" data-id="CREATE"><rect class="f" x="185" y="92" width="24" height="12" rx="6"/></g><path d="M192,98 H202" stroke="#8A8D99" stroke-width="1.5" stroke-linecap="round" pointer-events="none"/><text class="lbl" x="197" y="118" style="font-size:10px">Create</text></g>
-<g class="item" data-k="OP" data-cx="403" data-cy="105"><g class="b" data-id="OPTIONS"><rect class="f" x="391" y="92" width="24" height="12" rx="6"/></g><path d="M398,95.5 H408 M398,98 H408 M398,100.5 H408" stroke="#8A8D99" stroke-width="1.2" stroke-linecap="round" pointer-events="none"/><text class="lbl" x="403" y="118" style="font-size:10px">Options</text></g>
+<g fill="#1E5FAF"><circle cx="286" cy="198" r="1.3"/><circle cx="292" cy="199" r="1.3"/><circle cx="298" cy="199.5" r="1.3"/><circle cx="304" cy="199.5" r="1.3"/><circle cx="310" cy="199" r="1.3"/><circle cx="316" cy="198" r="1.3"/></g>
+<g class="item" data-k="CR" data-cx="197" data-cy="105"><g class="b" data-id="CREATE"><rect class="f" x="185" y="92" width="24" height="12" rx="6"/></g><path d="M192,98 H202" stroke="#7FB4F0" stroke-width="1.5" stroke-linecap="round" pointer-events="none"/><text class="lbl" x="197" y="118" style="font-size:10px">Create</text></g>
+<g class="item" data-k="OP" data-cx="403" data-cy="105"><g class="b" data-id="OPTIONS"><rect class="f" x="391" y="92" width="24" height="12" rx="6"/></g><path d="M398,95.5 H408 M398,98 H408 M398,100.5 H408" stroke="#7FB4F0" stroke-width="1.2" stroke-linecap="round" pointer-events="none"/><text class="lbl" x="403" y="118" style="font-size:10px">Options</text></g>
 </svg>
 <script>
 (function(){
@@ -175,9 +175,10 @@ document.addEventListener('visibilitychange',wake);document.addEventListener('po
 var gear=document.getElementById('gear'),corner=document.getElementById('corner'),taps=[];
 document.getElementById('hideGear').addEventListener('click',function(){panel.hidden=true;gear.hidden=true;corner.hidden=false;taps=[];});
 corner.addEventListener('pointerdown',function(e){e.preventDefault();var t=Date.now();taps=taps.filter(function(x){return t-x<1200;});taps.push(t);if(taps.length>=3){taps=[];gear.hidden=false;corner.hidden=true;}});
-var nb=document.getElementById('neon'),neonOn=true;
-try{neonOn=localStorage.getItem('dgNeon')!=='0';}catch(x){}
-nb.checked=neonOn;svg.classList.toggle('noneon',!neonOn);
-nb.addEventListener('change',function(){neonOn=nb.checked;svg.classList.toggle('noneon',!neonOn);try{localStorage.setItem('dgNeon',neonOn?'1':'0');}catch(x){}});
+var nb=document.getElementById('neon'),nv=document.getElementById('neonv'),nl=20;
+try{var q=parseInt(localStorage.getItem('dgNeonLvl'),10);if(q>=0&&q<=100)nl=q;}catch(x){}
+function applyNeon(){nb.value=nl;nv.textContent=nl+'%';svg.style.setProperty('--neon',(nl/100).toFixed(2));svg.classList.toggle('noneon',nl===0);}
+applyNeon();
+nb.addEventListener('input',function(){nl=+nb.value;applyNeon();try{localStorage.setItem('dgNeonLvl',String(nl));}catch(x){}});
 })();
 </script>
