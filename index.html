@@ -10,11 +10,15 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 #pad{width:100%;flex:1;min-height:0;display:block;transform-origin:center center}
 #rot{display:none;font-size:13px;color:#B4B2A9;text-align:center;padding:8px 0}
 @media (orientation:portrait){#rot{display:block}}
-.b{cursor:pointer}
-.f{fill:var(--btn);stroke:var(--edge);stroke-width:1.5}
+.b{cursor:pointer;transform-box:fill-box;transform-origin:center;transition:transform .08s ease-out}
+.b.on{transform:scale(.93)}
+.b.dp.on{transform:none}
+.knob{will-change:transform}
+.f{fill:url(#gBtn);stroke:var(--edge);stroke-width:1.5}
 .dp .f{fill:transparent;stroke:none}
-.pad{fill:var(--pad);stroke:var(--edge);stroke-width:1.5}
+.pad{fill:#1A1D25;stroke:var(--edge);stroke-width:1.5}
 .b.on .f{fill:var(--down)}
+.b.on .f[style]{fill:#3A4355}
 .b.on .pad{fill:#1E222B}
 text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .lbl{fill:#D3D1C7}
@@ -52,26 +56,37 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 </div>
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
+<defs>
+<linearGradient id="gBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E323D"/><stop offset="1" stop-color="#171A21"/></linearGradient>
+<linearGradient id="gBtn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3E4350"/><stop offset="1" stop-color="#252932"/></linearGradient>
+<linearGradient id="gPlate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1C1F27"/><stop offset="1" stop-color="#12141A"/></linearGradient>
+<radialGradient id="gCap" cx="0.4" cy="0.35" r="0.8"><stop offset="0" stop-color="#2C303A"/><stop offset="1" stop-color="#0A0B0F"/></radialGradient>
+</defs>
 <g class="item" data-k="L2" data-cx="145" data-cy="14"><g class="b" data-id="L2"><rect class="f" x="100" y="4" width="90" height="20" rx="10"/><text x="145" y="14">L2</text></g></g>
 <g class="item" data-k="L1" data-cx="145" data-cy="33"><g class="b" data-id="L1"><rect class="f" x="96" y="26" width="98" height="14" rx="7"/></g><text x="145" y="33" style="font-size:10px;fill:#8A8D99">L1</text></g>
 <g class="item" data-k="R2" data-cx="455" data-cy="14"><g class="b" data-id="R2"><rect class="f" x="410" y="4" width="90" height="20" rx="10"/><text x="455" y="14">R2</text></g></g>
 <g class="item" data-k="R1" data-cx="455" data-cy="33"><g class="b" data-id="R1"><rect class="f" x="406" y="26" width="98" height="14" rx="7"/></g><text x="455" y="33" style="font-size:10px;fill:#8A8D99">R1</text></g>
-<path d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="#20232B" stroke="#5A6070" stroke-width="2.5"/>
-<g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93">Touchpad</text></g><line x1="231" y1="131" x2="369" y2="131" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
-<g class="item" data-k="DP" data-cx="110" data-cy="105"><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="#2E323D" stroke="#5A6070" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="url(#gBody)" stroke="#555B6B" stroke-width="2.5"/>
+<path d="M176,47 C242,32 358,32 424,47" fill="none" stroke="#6A7184" stroke-width="1" opacity=".6" stroke-linecap="round"/>
+<path d="M192,54 H408 Q424,54 424,70 V198 Q424,212 410,212 H190 Q176,212 176,198 V70 Q176,54 192,54 Z" fill="url(#gPlate)" stroke="#262A33" stroke-width="1.5"/>
+<g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93" style="fill:#8A8D99">Touchpad</text></g><path d="M221,68 Q215,93 221,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/><path d="M379,68 Q385,93 379,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
+<g class="item" data-k="DP" data-cx="110" data-cy="105"><circle cx="110" cy="105" r="41" fill="#14161C" stroke="#2E323D" stroke-width="2"/><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="url(#gBtn)" stroke="#5A6070" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="110,78 105,87 115,87" fill="#8A8D99"/><polygon points="110,132 105,123 115,123" fill="#8A8D99"/><polygon points="83,105 92,100 92,110" fill="#8A8D99"/><polygon points="137,105 128,100 128,110" fill="#8A8D99"/>
 <g class="b dp" data-id="UP"><rect class="f" x="99" y="73" width="22" height="21"/></g>
 <g class="b dp" data-id="DOWN"><rect class="f" x="99" y="116" width="22" height="21"/></g>
 <g class="b dp" data-id="LEFT"><rect class="f" x="78" y="94" width="21" height="22"/></g>
 <g class="b dp" data-id="RIGHT"><rect class="f" x="121" y="94" width="21" height="22"/></g></g>
-<g class="item" data-k="TRI" data-cx="490" data-cy="75"><g class="b" data-id="TRIANGLE"><circle class="f" cx="490" cy="75" r="14"/><path class="sym" d="M490,69.5 L496,78.5 L484,78.5 Z" stroke="#5DCAA5"/></g></g>
-<g class="item" data-k="CIR" data-cx="520" data-cy="105"><g class="b" data-id="CIRCLE"><circle class="f" cx="520" cy="105" r="14"/><circle class="sym" cx="520" cy="105" r="6" stroke="#F09595"/></g></g>
-<g class="item" data-k="CRO" data-cx="490" data-cy="135"><g class="b" data-id="CROSS"><circle class="f" cx="490" cy="135" r="14"/><path class="sym" d="M484,129 L496,141 M496,129 L484,141" stroke="#85B7EB"/></g></g>
-<g class="item" data-k="SQU" data-cx="460" data-cy="105"><g class="b" data-id="SQUARE"><circle class="f" cx="460" cy="105" r="14"/><rect class="sym" x="454" y="99" width="12" height="12" stroke="#ED93B1"/></g></g>
-<g class="item" data-k="LS" data-cx="215" data-cy="168"><g class="stick" data-cx="215" data-cy="168"><circle cx="215" cy="168" r="34" fill="#14161C" stroke="#5A6070" stroke-width="2"/><g class="knob"><circle cx="215" cy="168" r="23" fill="#0F1116" stroke="#5A6070" stroke-width="1.5"/><circle cx="215" cy="168" r="10" fill="none" stroke="#5A6070" stroke-width="1.5"/></g></g></g>
-<g class="item" data-k="RS" data-cx="385" data-cy="168"><g class="stick" data-cx="385" data-cy="168"><circle cx="385" cy="168" r="34" fill="#14161C" stroke="#5A6070" stroke-width="2"/><g class="knob"><circle cx="385" cy="168" r="23" fill="#0F1116" stroke="#5A6070" stroke-width="1.5"/><circle cx="385" cy="168" r="10" fill="none" stroke="#5A6070" stroke-width="1.5"/></g></g></g>
-<g class="item" data-k="PS" data-cx="300" data-cy="150"><g class="b" data-id="PS"><circle class="f" cx="300" cy="150" r="12" style="stroke:#4DA3FF;stroke-width:2"/><text x="300" y="150">PS</text></g></g>
-<g class="item" data-k="CR" data-cx="205" data-cy="105"><g class="b" data-id="CREATE"><rect class="f" x="191" y="92" width="28" height="12" rx="6"/></g><text class="lbl" x="205" y="118">Create</text></g>
-<g class="item" data-k="OP" data-cx="395" data-cy="105"><g class="b" data-id="OPTIONS"><rect class="f" x="381" y="92" width="28" height="12" rx="6"/></g><text class="lbl" x="395" y="118">Options</text></g>
+<g class="item" data-k="TRI" data-cx="490" data-cy="75"><circle cx="490" cy="75" r="17" fill="#14161C" stroke="#2E323D" stroke-width="1.5"/><g class="b" data-id="TRIANGLE"><circle class="f" cx="490" cy="75" r="14"/><path class="sym" d="M490,69.5 L496,78.5 L484,78.5 Z" stroke="#5DCAA5"/></g></g>
+<g class="item" data-k="CIR" data-cx="520" data-cy="105"><circle cx="520" cy="105" r="17" fill="#14161C" stroke="#2E323D" stroke-width="1.5"/><g class="b" data-id="CIRCLE"><circle class="f" cx="520" cy="105" r="14"/><circle class="sym" cx="520" cy="105" r="6" stroke="#F09595"/></g></g>
+<g class="item" data-k="CRO" data-cx="490" data-cy="135"><circle cx="490" cy="135" r="17" fill="#14161C" stroke="#2E323D" stroke-width="1.5"/><g class="b" data-id="CROSS"><circle class="f" cx="490" cy="135" r="14"/><path class="sym" d="M484,129 L496,141 M496,129 L484,141" stroke="#85B7EB"/></g></g>
+<g class="item" data-k="SQU" data-cx="460" data-cy="105"><circle cx="460" cy="105" r="17" fill="#14161C" stroke="#2E323D" stroke-width="1.5"/><g class="b" data-id="SQUARE"><circle class="f" cx="460" cy="105" r="14"/><rect class="sym" x="454" y="99" width="12" height="12" stroke="#ED93B1"/></g></g>
+<g class="item" data-k="LS" data-cx="215" data-cy="168"><g class="stick" data-cx="215" data-cy="168"><circle cx="215" cy="168" r="35" fill="#14161C" stroke="#4A5060" stroke-width="2"/><circle cx="215" cy="168" r="30" fill="none" stroke="#3A3F4C" stroke-width="3" stroke-dasharray="1.5 3"/><g class="knob"><circle cx="215" cy="168" r="23" fill="url(#gCap)" stroke="#5A6070" stroke-width="1.5"/><circle cx="215" cy="168" r="15" fill="none" stroke="#2E323D" stroke-width="2"/><circle cx="215" cy="168" r="4" fill="#0A0B0F" stroke="#3A3F4C" stroke-width="1"/></g></g></g>
+<g class="item" data-k="RS" data-cx="385" data-cy="168"><g class="stick" data-cx="385" data-cy="168"><circle cx="385" cy="168" r="35" fill="#14161C" stroke="#4A5060" stroke-width="2"/><circle cx="385" cy="168" r="30" fill="none" stroke="#3A3F4C" stroke-width="3" stroke-dasharray="1.5 3"/><g class="knob"><circle cx="385" cy="168" r="23" fill="url(#gCap)" stroke="#5A6070" stroke-width="1.5"/><circle cx="385" cy="168" r="15" fill="none" stroke="#2E323D" stroke-width="2"/><circle cx="385" cy="168" r="4" fill="#0A0B0F" stroke="#3A3F4C" stroke-width="1"/></g></g></g>
+<g class="item" data-k="PS" data-cx="300" data-cy="150"><circle cx="300" cy="150" r="17" fill="none" stroke="#4DA3FF" stroke-width="1.5" opacity=".3"/><g class="b" data-id="PS"><circle class="f" cx="300" cy="150" r="12" style="stroke:#4DA3FF;stroke-width:2"/><text x="300" y="150" style="font-weight:700;font-size:10px">PS</text></g></g>
+<g class="item" data-k="MU" data-cx="300" data-cy="180"><g class="b" data-id="MUTE"><rect class="f" x="288" y="176" width="24" height="9" rx="4.5"/></g><circle cx="300" cy="180.5" r="1.8" fill="#F5A524"/></g>
+<g fill="#3A3F4C"><circle cx="286" cy="198" r="1.3"/><circle cx="292" cy="199" r="1.3"/><circle cx="298" cy="199.5" r="1.3"/><circle cx="304" cy="199.5" r="1.3"/><circle cx="310" cy="199" r="1.3"/><circle cx="316" cy="198" r="1.3"/></g>
+<g class="item" data-k="CR" data-cx="197" data-cy="105"><g class="b" data-id="CREATE"><rect class="f" x="185" y="92" width="24" height="12" rx="6"/></g><path d="M192,98 H202" stroke="#8A8D99" stroke-width="1.5" stroke-linecap="round" pointer-events="none"/><text class="lbl" x="197" y="118" style="font-size:10px">Create</text></g>
+<g class="item" data-k="OP" data-cx="403" data-cy="105"><g class="b" data-id="OPTIONS"><rect class="f" x="391" y="92" width="24" height="12" rx="6"/></g><path d="M398,95.5 H408 M398,98 H408 M398,100.5 H408" stroke="#8A8D99" stroke-width="1.2" stroke-linecap="round" pointer-events="none"/><text class="lbl" x="403" y="118" style="font-size:10px">Options</text></g>
 </svg>
 <script>
 (function(){
@@ -93,8 +108,8 @@ document.querySelectorAll('.b').forEach(function(el){
 });
 document.querySelectorAll('.stick').forEach(function(s){
  var key=s.parentNode.dataset.k,cx=+s.dataset.cx,cy=+s.dataset.cy,knob=s.querySelector('.knob'),id=null;
- function move(e){var z=sc(key),max=12*z,p=toSvg(e),dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}knob.setAttribute('transform','translate('+(dx/z).toFixed(1)+','+(dy/z).toFixed(1)+')');}
- function reset(){id=null;knob.setAttribute('transform','translate(0,0)');}
+ function move(e){var z=sc(key),max=12*z,p=toSvg(e),dx=p.x-cx,dy=p.y-cy,d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}knob.style.transition='none';knob.style.transform='translate('+(dx/z).toFixed(1)+'px,'+(dy/z).toFixed(1)+'px)';}
+ function reset(){id=null;knob.style.transition='transform .14s ease-out';knob.style.transform='translate(0px,0px)';}
  s.addEventListener('pointerdown',function(e){e.preventDefault();if(id!==null)return;id=e.pointerId;try{s.setPointerCapture(id);}catch(x){}move(e);});
  s.addEventListener('pointermove',function(e){if(e.pointerId===id)move(e);});
  ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){s.addEventListener(t,function(e){if(e.pointerId===id)reset();});});
@@ -102,7 +117,7 @@ document.querySelectorAll('.stick').forEach(function(s){
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
 
 var panel=document.getElementById('panel'),rows=document.getElementById('rows');
-var LIST=[['ALL','Pura controller'],['L1','L1'],['L2','L2'],['R1','R1'],['R2','R2'],['DP','D-Pad'],['TRI','Triangle'],['CIR','Circle'],['CRO','Cross'],['SQU','Square'],['LS','Left stick'],['RS','Right stick'],['TP','Touchpad'],['PS','PS button'],['CR','Create'],['OP','Options']];
+var LIST=[['ALL','Pura controller'],['L1','L1'],['L2','L2'],['R1','R1'],['R2','R2'],['DP','D-Pad'],['TRI','Triangle'],['CIR','Circle'],['CRO','Cross'],['SQU','Square'],['LS','Left stick'],['RS','Right stick'],['TP','Touchpad'],['PS','PS button'],['MU','Mute'],['CR','Create'],['OP','Options']];
 var inputs={};
 LIST.forEach(function(r){
  var k=r[0],row=document.createElement('div');row.className='row';
