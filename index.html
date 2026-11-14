@@ -49,6 +49,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 #panel h2{margin:0 0 8px;font-size:16px;font-weight:600}
 #panel h3{margin:12px 0 4px;font-size:14px;font-weight:600;color:#B4B2A9}
 .quick{display:flex;gap:8px;margin-bottom:6px}.quick button{flex:1}.quick #fs{flex:3}
+.fx{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 0;font-size:14px}.fxh{flex:1 0 100%}.seg{display:flex;flex:1;gap:4px}.seg button{flex:1;padding:9px 0;border-radius:9px;border:1px solid #2A4A7A;background:#0A111F;color:#cfe3ff;font-size:13px}.seg button.on{background:#1C4C94;border-color:#8FCBFF;color:#fff}.tst{padding:9px 14px;border-radius:9px;border:1px solid #2A4A7A;background:#0A111F;color:#cfe3ff;font-size:13px}.fx input[type=range]{flex:1}
+.b.on .f{filter:drop-shadow(0 0 5px #4DA3FF)}
 .tg{display:flex;gap:10px;align-items:center;padding:8px 0;font-size:14px}.tg input{width:22px;height:22px;flex:none}
 #hideGear{width:100%;margin-top:4px}
 #kbopen{width:100%;margin-top:6px}
@@ -70,7 +72,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <div id="panel" hidden>
 <h2>Settings</h2>
 <div class="quick"><button id="fs" type="button">Fullscreen</button><button id="sm" type="button" aria-label="Chhota">&minus;</button><button id="bg" type="button" aria-label="Bada">+</button></div>
-<label class="tg"><input type="checkbox" id="vib" checked> Vibration (button dabane par)</label>
+<div class="fx"><div class="fxh">📳 Vibration</div><div class="seg" id="vseg"><button data-v="0">Band</button><button data-v="1">Halka</button><button data-v="2">Medium</button><button data-v="3">Tez</button></div><button class="tst" id="vtest">Test</button></div>
+<div class="fx"><div class="fxh">🔊 Awaaz <span id="volv"></span></div><input type="range" id="vol" min="0" max="100" step="5"><button class="tst" id="stest">Test</button></div>
 <label class="tg"><input type="checkbox" id="awake" checked> Screen on rakho (band na ho)</label>
 <div class="row"><label for="neon">Neon light</label><input type="range" id="neon" min="0" max="100" step="5" value="20"><span class="v" id="neonv">20%</span></div>
 <label class="tg"><input type="checkbox" id="pulse" checked> Neon halka halka chamke (dheema phone par band karo)</label>
@@ -189,13 +192,37 @@ fb.addEventListener('click',function(){
 function sync(){fb.textContent=fsOn()?'Fullscreen band':'Fullscreen';}
 document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
 
-var O={vib:true,awake:true};
-try{var o=JSON.parse(localStorage.getItem('dgOpts')||'{}');if(o.vib===false)O.vib=false;if(o.awake===false)O.awake=false;}catch(x){}
-var vibEl=document.getElementById('vib'),awEl=document.getElementById('awake');
-vibEl.checked=O.vib;awEl.checked=O.awake;
+var O={vib:2,vol:40,awake:true};
+try{var o=JSON.parse(localStorage.getItem('dgOpts')||'{}');if(typeof o.vib==='number')O.vib=o.vib;else if(o.vib===false)O.vib=0;if(typeof o.vol==='number')O.vol=o.vol;if(o.awake===false)O.awake=false;}catch(x){}
+var awEl=document.getElementById('awake'),volEl=document.getElementById('vol'),volv=document.getElementById('volv'),vsegB=document.querySelectorAll('#vseg button');
+awEl.checked=O.awake;volEl.value=O.vol;
 function saveO(){try{localStorage.setItem('dgOpts',JSON.stringify(O));}catch(x){}}
-vibEl.addEventListener('change',function(){O.vib=vibEl.checked;saveO();if(O.vib&&navigator.vibrate)navigator.vibrate(30);});
-document.addEventListener('pointerdown',function(e){if(O.vib&&navigator.vibrate&&e.target.closest&&e.target.closest('.b'))navigator.vibrate(15);},true);
+function showV(){volv.textContent=O.vol?O.vol+'%':'(band)';vsegB.forEach(function(b){b.classList.toggle('on',+b.dataset.v===O.vib);});}
+showV();
+var BASE=[0,14,24,38];
+function sm(d){d=Math.max(d,12);return [Math.round(d*.5),4,Math.round(d*.3),5,Math.round(d*.2)];}
+function vib(p){if(!O.vib||!navigator.vibrate)return;try{navigator.vibrate(typeof p==='number'?sm(p):p);}catch(x){}}
+var ac=null;
+function ctx(){if(!ac){try{var C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C();}catch(x){}}if(ac&&ac.state==='suspended'){try{ac.resume();}catch(x){}}return ac;}
+function tone(f,d,v,f2,t0){var c=ctx();if(!c||!O.vol)return;try{var t=c.currentTime+(t0||0),o=c.createOscillator(),g=c.createGain();d=d*1.8;var lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;o.type='sine';o.frequency.setValueAtTime(f*.8,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2*.8,t+d);var pk=(O.vol/100)*(v||1)*0.45;g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(pk,t+0.014);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(lp);lp.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+0.02);}catch(x){}}
+var KIND={L1:'sh',R1:'sh',L2:'tr',R2:'tr',UP:'dp',DOWN:'dp',LEFT:'dp',RIGHT:'dp',TRIANGLE:'fc',CIRCLE:'fc',CROSS:'fc',SQUARE:'fc',PS:'ps',CREATE:'sm',OPTIONS:'sm',MUTE:'sm',TOUCHPAD:'tp'};
+function fb(id){var k=KIND[id]||'fc',b=BASE[O.vib]||0;
+ if(k==='fc'){vib(b);tone(520,.045,1,380);}
+ else if(k==='sh'){vib(Math.round(b*1.3));tone(300,.06,1,200);}
+ else if(k==='tr'){vib(Math.round(b*1.8));tone(200,.09,1.1,120);}
+ else if(k==='dp'){vib(Math.round(b*.8));tone(430,.035,.8,330);}
+ else if(k==='ps'){vib(sm(b).concat([50],sm(b)));tone(440,.09,1);tone(660,.14,1,0,.1);}
+ else if(k==='sm'){vib(sm(b).concat([40],sm(b)));tone(620,.05,.9);tone(620,.05,.7,0,.09);}
+ else if(k==='tp'){vib(Math.round(b*.6));tone(720,.03,.6);}}
+document.addEventListener('pointerdown',function(e){var t=e.target.closest&&e.target.closest('.b');if(t){fb(t.getAttribute('data-id'));return;}var s=e.target.closest&&e.target.closest('.stick');if(s){vib(Math.round((BASE[O.vib]||0)*.7));tone(260,.04,.6);}},true);
+var edge={};
+document.addEventListener('pointermove',function(e){var s=e.target.closest&&e.target.closest('.stick');if(!s)return;var k=s.dataset.cx,sv=document.getElementById('pad'),p=sv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;var q=p.matrixTransform(sv.getScreenCTM().inverse()),kn=s.querySelector('.knob'),r=kn?kn.getBoundingClientRect():null;if(!r)return;var cr=s.firstElementChild.getBoundingClientRect(),dx=e.clientX-(cr.left+cr.width/2),dy=e.clientY-(cr.top+cr.height/2),far=Math.hypot(dx,dy)>cr.width*0.2;if(far&&!edge[k]){edge[k]=1;vib(Math.round((BASE[O.vib]||0)*.9));tone(300,.04,.5);}else if(!far)edge[k]=0;},true);
+document.addEventListener('pointerup',function(){edge={};},true);
+vsegB.forEach(function(b){b.addEventListener('click',function(){O.vib=+b.dataset.v;saveO();showV();vib(O.vib?BASE[O.vib]*1.5:0);});});
+document.getElementById('vtest').addEventListener('click',function(){if(!O.vib)return;vib(sm(BASE[O.vib]).concat([80],sm(BASE[O.vib]*1.5),[80],sm(BASE[O.vib]*2)));});
+volEl.addEventListener('input',function(){O.vol=+volEl.value;saveO();showV();});
+volEl.addEventListener('change',function(){tone(520,.06,1);});
+document.getElementById('stest').addEventListener('click',function(){tone(520,.05,1,380);tone(300,.07,1,200,.15);tone(440,.09,1,0,.3);tone(660,.14,1,0,.4);});
 var wl=null;
 function wake(){if(!O.awake||!navigator.wakeLock||document.visibilityState!=='visible'||wl)return;try{navigator.wakeLock.request('screen').then(function(l){wl=l;l.addEventListener('release',function(){wl=null;});}).catch(function(){});}catch(x){}}
 function unwake(){if(wl){try{wl.release();}catch(x){}wl=null;}}
