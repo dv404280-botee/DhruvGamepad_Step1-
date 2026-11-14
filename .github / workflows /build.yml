@@ -1,8 +1,9 @@
 name: Build APK
 on:
   push:
-    paths:
+        paths:
       - 'app_project.zip'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
 permissions:
   contents: write
