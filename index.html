@@ -82,6 +82,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 .row span.v{text-align:right;color:#B4B2A9;font-variant-numeric:tabular-nums}
 #panel .acts{display:flex;gap:8px;margin-top:10px}
 #panel button{flex:1;background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:10px;font:14px system-ui,sans-serif}
+.lay{margin:4px 0 10px}.lrow{display:flex;gap:8px;margin-bottom:8px}.lrow input{flex:1;min-width:0;background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:9px;font:14px system-ui,sans-serif}
+.li{display:flex;gap:6px;align-items:center;margin:5px 0}.li .ln{flex:1;min-width:0;font:14px system-ui,sans-serif;color:#E6E8EE;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.li .ln.cur{color:#6FB4FF;font-weight:600}#panel .li button,#panel #lsave{flex:none;padding:7px 11px;font-size:13px}.li .del{border-color:#7a3340;color:#ff9aa8}
 </style>
 <div id="ui"><button id="gear" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#E6E8EE" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button></div>
 <div id="corner" hidden></div>
@@ -96,6 +98,8 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <label class="tg"><input type="checkbox" id="pulse" checked> Neon halka halka chamke (dheema phone par band karo)</label>
 <button id="hideGear" type="button">Settings icon chhupao</button>
 <p class="hint">Chhupane ke baad wapas lane ke liye upar dayein kone mein 3 baar jaldi tap karo.</p>
+<h3>Layout save (alag game ke liye)</h3>
+<div class="lay"><div class="lrow"><input id="lname" type="text" placeholder="Naam, jaise Cave Story" maxlength="20" autocomplete="off"><button id="lsave" type="button">Save</button></div><div id="llist"></div></div>
 <h3>Control rakhna hai? (tick) aur size</h3>
 <div id="rows"></div>
 <button id="kbopen" type="button">Keyboard kholo (mobile)</button>
@@ -225,6 +229,23 @@ document.getElementById('reset').addEventListener('click',function(){SZ={};ALL=1
 document.getElementById('sm').addEventListener('click',function(){ALL=Math.max(0.5,Math.round((ALL-0.05)*100)/100);applyAll();showAll();save();});
 document.getElementById('bg').addEventListener('click',function(){ALL=Math.min(1.15,Math.round((ALL+0.05)*100)/100);applyAll();showAll();save();});
 
+/* ---- Layout save: har game ka alag layout (size + chhupe huye buttons) ---- */
+var LAYS={},CURL='';
+try{var lj=JSON.parse(localStorage.getItem('dgLayouts')||'{}');if(lj&&typeof lj==='object')LAYS=lj;CURL=localStorage.getItem('dgCurLayout')||'';}catch(x){}
+var PRE={'Poora (sab)':{SZ:{},ALL:1,HIDE:{}},'Seedha (kam button)':{SZ:{},ALL:1,HIDE:{TP:1,MU:1,CR:1,PS:1}},'Racing (bade L2 R2)':{SZ:{L2:1.4,R2:1.4,L1:1.2,R1:1.2},ALL:1,HIDE:{TP:1,MU:1,CR:1,PS:1}}};
+function saveL(){try{localStorage.setItem('dgLayouts',JSON.stringify(LAYS));localStorage.setItem('dgCurLayout',CURL);}catch(x){}}
+function loadL(L,nm){SZ=JSON.parse(JSON.stringify(L.SZ||{}));ALL=L.ALL>=0.5&&L.ALL<=1.15?L.ALL:1;HIDE=JSON.parse(JSON.stringify(L.HIDE||{}));
+ Object.keys(items).forEach(applyVis);Object.keys(items).forEach(applyItem);applyAll();showAll();save();saveHide();CURL=nm;saveL();drawL();}
+var llist=document.getElementById('llist'),lname=document.getElementById('lname');
+function mkL(nm,L,canDel){var r=document.createElement('div');r.className='li';var n=document.createElement('span');n.className='ln'+(nm===CURL?' cur':'');n.textContent=(nm===CURL?'\u2713 ':'')+nm;
+ var b=document.createElement('button');b.type='button';b.textContent='Kholo';b.addEventListener('click',function(){loadL(L,nm);});r.appendChild(n);r.appendChild(b);
+ if(canDel){var d=document.createElement('button');d.type='button';d.className='del';d.textContent='Hatao';d.addEventListener('click',function(){if(d.dataset.sure){delete LAYS[nm];if(CURL===nm)CURL='';saveL();drawL();}else{d.dataset.sure='1';d.textContent='Pakka?';setTimeout(function(){d.dataset.sure='';d.textContent='Hatao';},2500);}});r.appendChild(d);}
+ llist.appendChild(r);}
+function drawL(){llist.innerHTML='';Object.keys(LAYS).forEach(function(k){mkL(k,LAYS[k],true);});Object.keys(PRE).forEach(function(k){mkL(k,PRE[k],false);});}
+document.getElementById('lsave').addEventListener('click',function(){var nm=lname.value.trim();if(!nm){lname.focus();return;}
+ LAYS[nm]={SZ:JSON.parse(JSON.stringify(SZ)),ALL:ALL,HIDE:JSON.parse(JSON.stringify(HIDE))};CURL=nm;lname.value='';saveL();drawL();});
+drawL();
+
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});}).catch(function(){});}
 if(window.caches){caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});}).catch(function(){});}
 var O={vib:0,vol:50,snd:0,awake:true};
@@ -239,20 +260,19 @@ function sm(d){d=Math.max(d,12);return [Math.round(d*.5),4,Math.round(d*.3),5,Ma
 function vib(p){if(!O.vib||!navigator.vibrate)return;try{navigator.vibrate(typeof p==='number'?sm(p):p);}catch(x){}}
 var ac=null;
 function ctx(){if(!ac){try{var C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C();}catch(x){}}if(ac&&ac.state==='suspended'){try{ac.resume();}catch(x){}}return ac;}
+var mst=null,live=0;
+function master(c){if(!mst){var g=c.createGain(),cp=c.createDynamicsCompressor();g.gain.value=.8;cp.threshold.value=-18;cp.knee.value=20;cp.ratio.value=8;cp.attack.value=.003;cp.release.value=.12;g.connect(cp);cp.connect(c.destination);mst=g;}return mst;}
+/* ek aawaaz: dheere shuru (click nahi), dheere khatam (zero tak), band hone par disconnect */
+function voice(c,out,type,f,f2,t,att,dur,pk,cut){var o=c.createOscillator(),g=c.createGain(),lp=c.createBiquadFilter();
+ lp.type='lowpass';lp.frequency.value=cut;o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+.03);
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(pk,t+att);g.gain.exponentialRampToValueAtTime(Math.max(pk*.002,.0002),t+att+dur);g.gain.linearRampToValueAtTime(0,t+att+dur+.025);
+ o.connect(g);g.connect(lp);lp.connect(out);live++;o.onended=function(){live--;try{lp.disconnect();g.disconnect();}catch(x){}};o.start(t);o.stop(t+att+dur+.04);}
 /* teen awaaz style: 0 Crystal (kaanch ki halki ghanti), 1 Naram (thum), 2 Klik (tock) */
-function ping(f,d,v,t0){var c=ctx();if(!c||!O.vol)return;
- try{var t=c.currentTime+(t0||0),pk=(O.vol/100)*(v||1),sty=O.snd||0,lp=c.createBiquadFilter(),g=c.createGain(),o=c.createOscillator();
-  lp.type='lowpass';
-  if(sty===0){lp.frequency.value=5000;o.type='sine';o.frequency.setValueAtTime(f,t);
-   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(pk*.5,t+.004);g.gain.exponentialRampToValueAtTime(0.0001,t+d*2.4);
-   var o2=c.createOscillator(),g2=c.createGain();o2.type='sine';o2.frequency.setValueAtTime(f*2.76,t);
-   g2.gain.setValueAtTime(0.0001,t);g2.gain.exponentialRampToValueAtTime(pk*.14,t+.003);g2.gain.exponentialRampToValueAtTime(0.0001,t+d);
-   o2.connect(g2);g2.connect(lp);o2.start(t);o2.stop(t+d+.05);}
-  else if(sty===1){lp.frequency.value=900;o.type='sine';o.frequency.setValueAtTime(f*.8,t);
-   g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(pk*.45,t+.014);g.gain.exponentialRampToValueAtTime(0.0001,t+d*1.8);}
-  else{lp.frequency.value=2600;o.type='triangle';o.frequency.setValueAtTime(f*1.4,t);o.frequency.exponentialRampToValueAtTime(f,t+.03);
-   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(pk*.6,t+.002);g.gain.exponentialRampToValueAtTime(0.0001,t+.07);}
-  o.connect(g);g.connect(lp);lp.connect(c.destination);o.start(t);o.stop(t+d*2.4+.05);}catch(x){}}
+function ping(f,d,v,t0){var c=ctx();if(!c||!O.vol)return;if(live>6)return;
+ try{var t=c.currentTime+(t0||0)+.005,pk=(O.vol/100)*(v||1)*.5,sty=O.snd||0,out=master(c);
+  if(sty===0){voice(c,out,'sine',f,0,t,.008,d*2.2,pk,5000);voice(c,out,'sine',f*2.76,0,t,.006,d*.9,pk*.2,5000);}
+  else if(sty===1){voice(c,out,'sine',f*.8,0,t,.016,d*1.6,pk*.8,900);}
+  else{voice(c,out,'triangle',f*1.4,f,t,.006,.06,pk*.8,2600);}}catch(x){}}
 var KIND={L1:'sh',R1:'sh',L2:'tr',R2:'tr',UP:'dp',DOWN:'dp',LEFT:'dp',RIGHT:'dp',TRIANGLE:'fc',CIRCLE:'fc',CROSS:'fc',SQUARE:'fc',PS:'ps',CREATE:'sm',OPTIONS:'sm',MUTE:'sm',TOUCHPAD:'tp'};
 var FN={TRIANGLE:784,CIRCLE:659,CROSS:523,SQUARE:587},DN={UP:659,DOWN:494,LEFT:554,RIGHT:587};
 function hapt(id){var k=KIND[id]||'fc',b=BASE[O.vib]||0;
