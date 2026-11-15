@@ -23,6 +23,9 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 #rip.go{animation:rip .35s ease-out}
 @media (prefers-reduced-motion:reduce){#panel,#gear,.pg{animation:none}#pad.enter .b{animation:none}#rip.go{animation:none}#pad,#ui{animation:none}}
 .b.dp.on{transform:none}
+.b.dp.on .f{fill:rgba(77,163,255,.2);stroke:none}
+#kbbar{animation:slideU .28s cubic-bezier(.2,.8,.3,1) both}
+@keyframes slideU{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .knob{}
 .stick>circle{transition:stroke .12s}
 .stick.held>circle:first-child{stroke:#8FCBFF;filter:drop-shadow(0 0 4px rgba(77,163,255,.6))}
@@ -84,9 +87,10 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <div id="corner" hidden></div>
 <div id="panel" hidden>
 <h2>Settings</h2>
-<div class="quick"><button id="fs" type="button">Fullscreen</button><button id="sm" type="button" aria-label="Chhota">&minus;</button><button id="bg" type="button" aria-label="Bada">+</button></div>
-<div class="fx"><div class="fxh">📳 Vibration</div><div class="seg" id="vseg"><button data-v="0">Band</button><button data-v="1">Halka</button><button data-v="2">Medium</button><button data-v="3">Tez</button></div><button class="tst" id="vtest">Test</button></div>
+<div class="quick"><button id="sm" type="button" aria-label="Chhota">&minus;</button><button id="bg" type="button" aria-label="Bada">+</button></div>
+<div class="fx"><div class="fxh">📳 Vibration (D-pad par nahi)</div><div class="seg" id="vseg"><button data-v="0">Band</button><button data-v="1">Halka</button><button data-v="2">Medium</button><button data-v="3">Tez</button></div><button class="tst" id="vtest">Test</button></div>
 <div class="fx"><div class="fxh">🔊 Awaaz <span id="volv"></span></div><input type="range" id="vol" min="0" max="100" step="5"><button class="tst" id="stest">Test</button></div>
+<div class="fx"><div class="fxh">🎵 Awaaz style</div><div class="seg" id="sseg"><button data-s="0">Crystal</button><button data-s="1">Naram</button><button data-s="2">Klik</button></div></div>
 <label class="tg"><input type="checkbox" id="awake" checked> Screen on rakho (band na ho)</label>
 <div class="row"><label for="neon">Neon light</label><input type="range" id="neon" min="0" max="100" step="5" value="20"><span class="v" id="neonv">20%</span></div>
 <label class="tg"><input type="checkbox" id="pulse" checked> Neon halka halka chamke (dheema phone par band karo)</label>
@@ -97,7 +101,7 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <button id="kbopen" type="button">Keyboard kholo (mobile)</button>
 <div class="acts"><button id="reset" type="button">Reset</button><button id="close" type="button">Band karo</button></div>
 </div>
-<div id="kbbar" hidden><input id="kbtext" type="text" placeholder="Yahan likho" autocomplete="off" autocapitalize="off" spellcheck="false"><button id="kbclear" type="button">Saaf</button><button id="kbclose" type="button">Band</button></div>
+<div id="kbbar" hidden><input id="kbtext" type="text" placeholder="Yahan likho" autocomplete="off" autocapitalize="off" spellcheck="false"><button id="kbenter" type="button">&#8629;</button><button id="kbclear" type="button">Saaf</button><button id="kbclose" type="button">Band</button></div>
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
 <defs>
@@ -116,14 +120,14 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <path d="M170,45 C240,28 360,28 430,45 C500,55 540,110 560,190 C575,250 545,280 515,270 C480,260 465,220 430,215 L170,215 C135,220 120,260 85,270 C55,280 25,250 40,190 C60,110 100,55 170,45 Z" fill="url(#gBody)" stroke="#2F7FD6" stroke-width="2.5"/>
 <path d="M176,47 C242,32 358,32 424,47" fill="none" stroke="#8FCBFF" stroke-width="1" opacity=".6" stroke-linecap="round"/>
 <path d="M192,54 H408 Q424,54 424,70 V198 Q424,212 410,212 H190 Q176,212 176,198 V70 Q176,54 192,54 Z" fill="url(#gPlate)" stroke="#1E4F8F" stroke-width="1.5"/>
-<g pointer-events="none" transform="translate(300 44) scale(.68) translate(-300 -44)"><circle cx="300" cy="44" r="9.5" fill="#2A0A0C" stroke="#FF2D2D" stroke-width="1.8"/><path d="M296.5,39.2 H300 C304,39.2 305.6,41.6 305.6,44 C305.6,46.4 304,48.8 300,48.8 H296.5 Z" fill="none" stroke="#FF2D2D" stroke-width="1.8" stroke-linejoin="round"/></g>
+
 <g class="item" data-k="TP" data-cx="300" data-cy="97"><g class="b" data-id="TOUCHPAD"><rect class="pad" x="225" y="62" width="150" height="62" rx="14"/><text x="300" y="93" style="fill:#7FB4F0">Touchpad</text></g><circle id="tpdot" cx="300" cy="93" r="6" fill="#8FCBFF" stroke="#2F7FD6" stroke-width="1.5" pointer-events="none" style="opacity:0;transition:opacity .25s"/><path class="neon" d="M221,68 Q215,93 221,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M221,68 Q215,93 221,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/><path class="neon" d="M379,68 Q385,93 379,118" fill="none" stroke="#2D8CFF" stroke-width="7" stroke-linecap="round" filter="url(#blur2)"/><path d="M379,68 Q385,93 379,118" fill="none" stroke="#4DA3FF" stroke-width="3" stroke-linecap="round"/></g>
 <g class="item" data-k="DP" data-cx="110" data-cy="105"><circle cx="110" cy="105" r="41" fill="#0A111F" stroke="#1E4F8F" stroke-width="2"/><g id="dpc" style="transform-origin:110px 105px;transition:transform .09s ease-out"><polygon points="99,73 121,73 121,94 142,94 142,116 121,116 121,137 99,137 99,116 78,116 78,94 99,94" fill="url(#gBtn)" stroke="#2F7FD6" stroke-width="1.5" stroke-linejoin="round"/>
 <polygon points="110,78 105,87 115,87" fill="#7FB4F0"/><polygon points="110,132 105,123 115,123" fill="#7FB4F0"/><polygon points="83,105 92,100 92,110" fill="#7FB4F0"/><polygon points="137,105 128,100 128,110" fill="#7FB4F0"/></g>
-<g class="b dp" data-id="UP"><rect class="f" x="99" y="73" width="22" height="21"/></g>
-<g class="b dp" data-id="DOWN"><rect class="f" x="99" y="116" width="22" height="21"/></g>
-<g class="b dp" data-id="LEFT"><rect class="f" x="78" y="94" width="21" height="22"/></g>
-<g class="b dp" data-id="RIGHT"><rect class="f" x="121" y="94" width="21" height="22"/></g></g>
+<g class="b dp" data-id="UP"><path class="f" d="M110,105 L81,76 A41,41 0 0 1 139,76 Z"/></g>
+<g class="b dp" data-id="DOWN"><path class="f" d="M110,105 L139,134 A41,41 0 0 1 81,134 Z"/></g>
+<g class="b dp" data-id="LEFT"><path class="f" d="M110,105 L81,134 A41,41 0 0 1 81,76 Z"/></g>
+<g class="b dp" data-id="RIGHT"><path class="f" d="M110,105 L139,76 A41,41 0 0 1 139,134 Z"/></g></g></g>
 <g class="item" data-k="TRI" data-cx="490" data-cy="75"><circle cx="490" cy="75" r="17" fill="#0A111F" stroke="#1E4F8F" stroke-width="1.5"/><g class="b" data-id="TRIANGLE"><circle class="f" cx="490" cy="75" r="14"/><path class="sym" d="M490,69.5 L496,78.5 L484,78.5 Z" stroke="#5DCAA5"/></g></g>
 <g class="item" data-k="CIR" data-cx="520" data-cy="105"><circle cx="520" cy="105" r="17" fill="#0A111F" stroke="#1E4F8F" stroke-width="1.5"/><g class="b" data-id="CIRCLE"><circle class="f" cx="520" cy="105" r="14"/><circle class="sym" cx="520" cy="105" r="6" stroke="#F09595"/></g></g>
 <g class="item" data-k="CRO" data-cx="490" data-cy="135"><circle cx="490" cy="135" r="17" fill="#0A111F" stroke="#1E4F8F" stroke-width="1.5"/><g class="b" data-id="CROSS"><circle class="f" cx="490" cy="135" r="14"/><path class="sym" d="M484,129 L496,141 M496,129 L484,141" stroke="#85B7EB"/></g></g>
@@ -155,10 +159,26 @@ function saveHide(){try{localStorage.setItem('dgHidden',JSON.stringify(HIDE));}c
 Object.keys(items).forEach(applyVis);
 
 function toSvg(e){var p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
-document.querySelectorAll('.b').forEach(function(el){
- el.addEventListener('pointerdown',function(e){e.preventDefault();el.classList.add('on');try{el.setPointerCapture(e.pointerId);}catch(x){}});
- ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){el.addEventListener(t,function(){el.classList.remove('on');});});
+var PR={};
+function pressBtn(el,id,down){
+ if(down){if(PR[id])return;PR[id]=el;el.classList.add('on');}else{if(!PR[id])return;delete PR[id];el.classList.remove('on');}
+ try{window.dispatchEvent(new CustomEvent('dgbtn',{detail:{id:id,down:down}}));}catch(x){}
+}
+document.querySelectorAll('.b:not(.dp)').forEach(function(el){
+ var id=el.getAttribute('data-id');
+ el.addEventListener('pointerdown',function(e){e.preventDefault();pressBtn(el,id,true);try{el.setPointerCapture(e.pointerId);}catch(x){}});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){el.addEventListener(t,function(){pressBtn(el,id,false);});});
 });
+/* D-pad: poori gol jagah par angle se chalta hai; ungli ghumane par disha badalti hai */
+var dpG=document.querySelector('[data-k="DP"]'),dpPt=null,dpCur=null,DPEL={};
+['UP','DOWN','LEFT','RIGHT'].forEach(function(k){DPEL[k]=document.querySelector('.b[data-id="'+k+'"]');});
+function dpSet(k){if(k===dpCur)return;if(dpCur)pressBtn(DPEL[dpCur],dpCur,false);dpCur=k;if(k)pressBtn(DPEL[k],k,true);}
+function dpDir(e,first){var p=toSvg(e),dx=p.x-110,dy=p.y-105;if(!first&&Math.hypot(dx,dy)<5*sc('DP'))return dpCur;var a=Math.atan2(dy,dx)*180/Math.PI;if(a>=-45&&a<45)return'RIGHT';if(a>=45&&a<135)return'DOWN';if(a>=135||a<-135)return'LEFT';return'UP';}
+['UP','DOWN','LEFT','RIGHT'].forEach(function(k){DPEL[k].addEventListener('pointerdown',function(e){e.preventDefault();if(dpPt!==null)return;dpPt=e.pointerId;try{DPEL[k].setPointerCapture(e.pointerId);}catch(x){}dpSet(dpDir(e,true));});});
+dpG.addEventListener('pointermove',function(e){if(e.pointerId===dpPt)dpSet(dpDir(e,false));});
+['pointerup','pointercancel','lostpointercapture'].forEach(function(t){dpG.addEventListener(t,function(e){if(e.pointerId===dpPt){dpPt=null;dpSet(null);}});});
+function relAll(){Object.keys(PR).forEach(function(id){pressBtn(PR[id],id,false);});dpPt=null;dpCur=null;}
+document.addEventListener('visibilitychange',function(){if(document.hidden)relAll();});window.addEventListener('blur',relAll);
 document.querySelectorAll('.stick').forEach(function(s){
  var key=s.parentNode.dataset.k,cx=+s.dataset.cx,cy=+s.dataset.cy,knob=s.querySelector('.knob'),id=null;
  var tx=0,ty=0,px=0,py=0,vx=0,vy=0,raf=0,held=false,zz=1;
@@ -207,48 +227,53 @@ document.getElementById('bg').addEventListener('click',function(){ALL=Math.min(1
 
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});}).catch(function(){});}
 if(window.caches){caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});}).catch(function(){});}
-var fb=document.getElementById('fs'),el=document.documentElement;
-function fsOn(){return document.fullscreenElement||document.webkitFullscreenElement;}
-fb.addEventListener('click',function(){
- if(fsOn()){var x=document.exitFullscreen||document.webkitExitFullscreen;if(x)try{x.call(document);}catch(e){}return;}
- var f=el.requestFullscreen||el.webkitRequestFullscreen;
- if(!f){fb.textContent='Fullscreen nahi chalta';return;}
- try{var p=f.call(el);if(p&&p.then){p.then(function(){try{screen.orientation.lock('landscape').catch(function(){});}catch(x){}}).catch(function(){fb.textContent='Fullscreen nahi chalta';});}}catch(x){}
-});
-function sync(){fb.textContent=fsOn()?'Fullscreen band':'Fullscreen';}
-document.addEventListener('fullscreenchange',sync);document.addEventListener('webkitfullscreenchange',sync);
-
-var O={vib:2,vol:40,awake:true};
-try{var o=JSON.parse(localStorage.getItem('dgOpts')||'{}');if(typeof o.vib==='number')O.vib=o.vib;else if(o.vib===false)O.vib=0;if(typeof o.vol==='number')O.vol=o.vol;if(o.awake===false)O.awake=false;}catch(x){}
-var awEl=document.getElementById('awake'),volEl=document.getElementById('vol'),volv=document.getElementById('volv'),vsegB=document.querySelectorAll('#vseg button');
+var O={vib:0,vol:50,snd:0,awake:true};
+try{var o=JSON.parse(localStorage.getItem('dgOpts')||'{}');if(typeof o.vib==='number')O.vib=o.vib;else if(o.vib===false)O.vib=0;if(typeof o.vol==='number')O.vol=o.vol;if(typeof o.snd==='number')O.snd=o.snd;if(o.awake===false)O.awake=false;}catch(x){}
+var awEl=document.getElementById('awake'),volEl=document.getElementById('vol'),volv=document.getElementById('volv'),vsegB=document.querySelectorAll('#vseg button'),ssegB=document.querySelectorAll('#sseg button');
 awEl.checked=O.awake;volEl.value=O.vol;
 function saveO(){try{localStorage.setItem('dgOpts',JSON.stringify(O));}catch(x){}}
-function showV(){volv.textContent=O.vol?O.vol+'%':'(band)';vsegB.forEach(function(b){b.classList.toggle('on',+b.dataset.v===O.vib);});}
+function showV(){volv.textContent=O.vol?O.vol+'%':'(band)';vsegB.forEach(function(b){b.classList.toggle('on',+b.dataset.v===O.vib);});ssegB.forEach(function(b){b.classList.toggle('on',+b.dataset.s===O.snd);});}
 showV();
 var BASE=[0,14,24,38];
 function sm(d){d=Math.max(d,12);return [Math.round(d*.5),4,Math.round(d*.3),5,Math.round(d*.2)];}
 function vib(p){if(!O.vib||!navigator.vibrate)return;try{navigator.vibrate(typeof p==='number'?sm(p):p);}catch(x){}}
 var ac=null;
 function ctx(){if(!ac){try{var C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C();}catch(x){}}if(ac&&ac.state==='suspended'){try{ac.resume();}catch(x){}}return ac;}
-function tone(f,d,v,f2,t0){var c=ctx();if(!c||!O.vol)return;try{var t=c.currentTime+(t0||0),o=c.createOscillator(),g=c.createGain();d=d*1.8;var lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;o.type='sine';o.frequency.setValueAtTime(f*.8,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2*.8,t+d);var pk=(O.vol/100)*(v||1)*0.45;g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(pk,t+0.014);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(lp);lp.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+0.02);}catch(x){}}
+/* teen awaaz style: 0 Crystal (kaanch ki halki ghanti), 1 Naram (thum), 2 Klik (tock) */
+function ping(f,d,v,t0){var c=ctx();if(!c||!O.vol)return;
+ try{var t=c.currentTime+(t0||0),pk=(O.vol/100)*(v||1),sty=O.snd||0,lp=c.createBiquadFilter(),g=c.createGain(),o=c.createOscillator();
+  lp.type='lowpass';
+  if(sty===0){lp.frequency.value=5000;o.type='sine';o.frequency.setValueAtTime(f,t);
+   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(pk*.5,t+.004);g.gain.exponentialRampToValueAtTime(0.0001,t+d*2.4);
+   var o2=c.createOscillator(),g2=c.createGain();o2.type='sine';o2.frequency.setValueAtTime(f*2.76,t);
+   g2.gain.setValueAtTime(0.0001,t);g2.gain.exponentialRampToValueAtTime(pk*.14,t+.003);g2.gain.exponentialRampToValueAtTime(0.0001,t+d);
+   o2.connect(g2);g2.connect(lp);o2.start(t);o2.stop(t+d+.05);}
+  else if(sty===1){lp.frequency.value=900;o.type='sine';o.frequency.setValueAtTime(f*.8,t);
+   g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(pk*.45,t+.014);g.gain.exponentialRampToValueAtTime(0.0001,t+d*1.8);}
+  else{lp.frequency.value=2600;o.type='triangle';o.frequency.setValueAtTime(f*1.4,t);o.frequency.exponentialRampToValueAtTime(f,t+.03);
+   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(pk*.6,t+.002);g.gain.exponentialRampToValueAtTime(0.0001,t+.07);}
+  o.connect(g);g.connect(lp);lp.connect(c.destination);o.start(t);o.stop(t+d*2.4+.05);}catch(x){}}
 var KIND={L1:'sh',R1:'sh',L2:'tr',R2:'tr',UP:'dp',DOWN:'dp',LEFT:'dp',RIGHT:'dp',TRIANGLE:'fc',CIRCLE:'fc',CROSS:'fc',SQUARE:'fc',PS:'ps',CREATE:'sm',OPTIONS:'sm',MUTE:'sm',TOUCHPAD:'tp'};
+var FN={TRIANGLE:784,CIRCLE:659,CROSS:523,SQUARE:587},DN={UP:659,DOWN:494,LEFT:554,RIGHT:587};
 function hapt(id){var k=KIND[id]||'fc',b=BASE[O.vib]||0;
- if(k==='fc'){vib(b);tone(520,.045,1,380);}
- else if(k==='sh'){vib(Math.round(b*1.3));tone(300,.06,1,200);}
- else if(k==='tr'){vib(Math.round(b*1.8));tone(200,.09,1.1,120);}
- else if(k==='dp'){vib(Math.round(b*.8));tone(430,.035,.8,330);}
- else if(k==='ps'){vib(sm(b).concat([50],sm(b)));tone(440,.09,1);tone(660,.14,1,0,.1);}
- else if(k==='sm'){vib(sm(b).concat([40],sm(b)));tone(620,.05,.9);tone(620,.05,.7,0,.09);}
- else if(k==='tp'){vib(Math.round(b*.6));tone(720,.03,.6);}}
-document.addEventListener('pointerdown',function(e){var t=e.target.closest&&e.target.closest('.b');if(t){hapt(t.getAttribute('data-id'));return;}var s=e.target.closest&&e.target.closest('.stick');if(s){vib(Math.round((BASE[O.vib]||0)*.7));tone(260,.04,.6);}},true);
+ if(k==='fc'){vib(b);ping(FN[id]||523,.05,1);}
+ else if(k==='sh'){vib(Math.round(b*1.3));ping(id==='L1'?330:392,.06,1);}
+ else if(k==='tr'){vib(Math.round(b*1.8));ping(id==='L2'?196:233,.09,1.1);}
+ else if(k==='dp'){ping(DN[id]||494,.035,.8);}
+ else if(k==='ps'){vib(sm(b).concat([50],sm(b)));ping(523,.1,1);ping(784,.16,1,.11);}
+ else if(k==='sm'){if(id==='MUTE'){ping(330,.07,.9);}else{var n=id==='CREATE'?698:587;ping(n,.05,.9);ping(n,.05,.7,.09);}}
+ else if(k==='tp'){vib(Math.round(b*.6));ping(880,.03,.5);}}
+window.addEventListener('dgbtn',function(e){if(e.detail.down)hapt(e.detail.id);});
+document.addEventListener('pointerdown',function(e){var s=e.target.closest&&e.target.closest('.stick');if(s){vib(Math.round((BASE[O.vib]||0)*.7));ping(262,.05,.6);}},true);
 var edge={};
-document.addEventListener('pointermove',function(e){var s=e.target.closest&&e.target.closest('.stick');if(!s)return;var k=s.dataset.cx,sv=document.getElementById('pad'),p=sv.createSVGPoint();p.x=e.clientX;p.y=e.clientY;var q=p.matrixTransform(sv.getScreenCTM().inverse()),kn=s.querySelector('.knob'),r=kn?kn.getBoundingClientRect():null;if(!r)return;var cr=s.firstElementChild.getBoundingClientRect(),dx=e.clientX-(cr.left+cr.width/2),dy=e.clientY-(cr.top+cr.height/2),far=Math.hypot(dx,dy)>cr.width*0.2;if(far&&!edge[k]){edge[k]=1;vib(Math.round((BASE[O.vib]||0)*.9));tone(300,.04,.5);}else if(!far)edge[k]=0;},true);
+document.addEventListener('pointermove',function(e){var s=e.target.closest&&e.target.closest('.stick');if(!s)return;var k=s.dataset.cx,cr=s.firstElementChild.getBoundingClientRect(),dx=e.clientX-(cr.left+cr.width/2),dy=e.clientY-(cr.top+cr.height/2),far=Math.hypot(dx,dy)>cr.width*0.2;if(far&&!edge[k]){edge[k]=1;vib(Math.round((BASE[O.vib]||0)*.9));ping(349,.05,.5);}else if(!far)edge[k]=0;},true);
 document.addEventListener('pointerup',function(){edge={};},true);
 vsegB.forEach(function(b){b.addEventListener('click',function(){O.vib=+b.dataset.v;saveO();showV();vib(O.vib?BASE[O.vib]*1.5:0);});});
+ssegB.forEach(function(b){b.addEventListener('click',function(){O.snd=+b.dataset.s;saveO();showV();ping(659,.06,1);ping(784,.08,1,.09);});});
 document.getElementById('vtest').addEventListener('click',function(){if(!O.vib)return;vib(sm(BASE[O.vib]).concat([80],sm(BASE[O.vib]*1.5),[80],sm(BASE[O.vib]*2)));});
 volEl.addEventListener('input',function(){O.vol=+volEl.value;saveO();showV();});
-volEl.addEventListener('change',function(){tone(520,.06,1);});
-document.getElementById('stest').addEventListener('click',function(){tone(520,.05,1,380);tone(300,.07,1,200,.15);tone(440,.09,1,0,.3);tone(660,.14,1,0,.4);});
+volEl.addEventListener('change',function(){ping(523,.06,1);});
+document.getElementById('stest').addEventListener('click',function(){ping(523,.06,1);ping(587,.06,1,.12);ping(659,.06,1,.24);ping(784,.14,1,.36);});
 var wl=null;
 function wake(){if(!O.awake||!navigator.wakeLock||document.visibilityState!=='visible'||wl)return;try{navigator.wakeLock.request('screen').then(function(l){wl=l;l.addEventListener('release',function(){wl=null;});}).catch(function(){});}catch(x){}}
 function unwake(){if(wl){try{wl.release();}catch(x){}wl=null;}}
@@ -277,13 +302,12 @@ pu.addEventListener('change',function(){pulseOn=pu.checked;svg.classList.toggle(
 var kb=document.getElementById('kbbar'),kt=document.getElementById('kbtext');
 document.getElementById('kbopen').addEventListener('click',function(){panel.hidden=true;kb.hidden=false;setTimeout(function(){try{kt.focus();}catch(x){}},50);});
 document.getElementById('kbclose').addEventListener('click',function(){kb.hidden=true;try{kt.blur();}catch(x){}});
+document.getElementById('kbenter').addEventListener('click',function(){try{window.dispatchEvent(new CustomEvent('dgenter'));}catch(x){}});
 document.getElementById('kbclear').addEventListener('click',function(){kt.value='';kt.focus();kt.dispatchEvent(new Event('input'));});
 kt.addEventListener('input',function(){var d={text:kt.value};try{window.dispatchEvent(new CustomEvent('dgtext',{detail:d}));}catch(x){}if(typeof window.dgSendText==='function'){try{window.dgSendText(d);}catch(x){}}});
 var dpc=document.getElementById('dpc'),dpv={UP:[0,-1.6],DOWN:[0,1.6],LEFT:[-1.6,0],RIGHT:[1.6,0]},dpOn={};
-function dpApply(){var x=0,y=0,n=0;Object.keys(dpOn).forEach(function(k){if(dpOn[k]){x+=dpv[k][0];y+=dpv[k][1];n++;}});dpc.style.transform=n?'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) scale(.975)':'translate(0px,0px) scale(1)';}
-Object.keys(dpv).forEach(function(k){var el=document.querySelector('[data-id="'+k+'"]');
- el.addEventListener('pointerdown',function(){dpOn[k]=true;dpApply();});
- ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){el.addEventListener(t,function(){dpOn[k]=false;dpApply();});});});
+function dpApply(){var x=0,y=0,n=0;Object.keys(dpOn).forEach(function(k){if(dpOn[k]){x+=dpv[k][0];y+=dpv[k][1];n++;}});var ar=dpc.querySelectorAll('polygon');['UP','DOWN','LEFT','RIGHT'].forEach(function(k,i){if(ar[i+1])ar[i+1].setAttribute('fill',dpOn[k]?'#FFFFFF':'#7FB4F0');});dpc.style.transform=n?'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) scale(.975)':'translate(0px,0px) scale(1)';}
+window.addEventListener('dgbtn',function(e){var k=e.detail.id;if(dpv[k]){dpOn[k]=e.detail.down;dpApply();}});
 
 function enter(){svg.classList.add('enter');var bs=svg.querySelectorAll('.b');for(var i=0;i<bs.length;i++)bs[i].style.animationDelay=(0.3+i*0.04).toFixed(2)+'s';setTimeout(function(){svg.classList.remove('enter');},1600);}
 enter();
