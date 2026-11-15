@@ -84,6 +84,16 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 #panel button{flex:1;background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:10px;font:14px system-ui,sans-serif}
 .lay{margin:4px 0 10px}.lrow{display:flex;gap:8px;margin-bottom:8px}.lrow input{flex:1;min-width:0;background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:9px;font:14px system-ui,sans-serif}
 .li{display:flex;gap:6px;align-items:center;margin:5px 0}.li .ln{flex:1;min-width:0;font:14px system-ui,sans-serif;color:#E6E8EE;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.li .ln.cur{color:#6FB4FF;font-weight:600}#panel .li button,#panel #lsave{flex:none;padding:7px 11px;font-size:13px}.li .del{border-color:#7a3340;color:#ff9aa8}
+#panel .chips{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}#panel .chips button{flex:none;min-width:40px;padding:8px 6px;font-size:14px}
+#panel .m2{display:flex;gap:6px;margin:6px 0}#panel .m2 button{padding:8px 4px;font-size:13px}#panel .m2 button.on{background:#1C4C94;border-color:#8FCBFF}
+#mprev{font-size:15px;color:#cfe3ff;min-height:22px;padding:6px 8px;background:#060910;border-radius:8px;margin:4px 0;word-break:break-word}
+#mname{width:100%;box-sizing:border-box;background:#0A111F;color:#E6E8EE;border:1px solid #2F7FD6;border-radius:10px;padding:9px;font:14px system-ui,sans-serif;margin-bottom:4px}
+#panel .ml{display:flex;gap:6px;align-items:center;margin:4px 0}#panel .ml .ln{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#panel .ml button{flex:none;padding:7px 10px;font-size:13px}
+#mbar{position:fixed;left:50%;bottom:calc(6px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:5;display:flex;gap:8px;max-width:60vw;flex-wrap:wrap;justify-content:center}
+#mbar[hidden]{display:none}#mbar button{background:rgba(10,17,31,.82);color:#E6E8EE;border:1px solid #2F7FD6;border-radius:999px;padding:9px 16px;font:600 13px system-ui,sans-serif;touch-action:manipulation;-webkit-user-select:none;user-select:none}#mbar button.run{background:#1C4C94;border-color:#8FCBFF}
+#curapp{font-size:12px;color:#7FB4F0;margin:2px 0 6px;word-break:break-all}
+#sro{font-size:12px;color:#7FB4F0;margin:2px 0;font-variant-numeric:tabular-nums}
+#panel .li button.g{padding:7px 8px}#thseg{gap:3px}#thseg button{font-size:12px;padding:9px 0}
 </style>
 <div id="ui"><button id="gear" type="button" aria-label="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="#E6E8EE" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></button></div>
 <div id="corner" hidden></div>
@@ -98,13 +108,30 @@ text{font-size:11px;fill:var(--text);text-anchor:middle;dominant-baseline:centra
 <label class="tg"><input type="checkbox" id="pulse" checked> Neon halka halka chamke (dheema phone par band karo)</label>
 <button id="hideGear" type="button">Settings icon chhupao</button>
 <p class="hint">Chhupane ke baad wapas lane ke liye upar dayein kone mein 3 baar jaldi tap karo.</p>
+<div class="fx"><div class="fxh">🎨 Rang (theme)</div><div class="seg" id="thseg"><button data-t="0" data-keep style="border-bottom:3px solid #2F7FD6">Neela</button><button data-t="1" data-keep style="border-bottom:3px solid #F4F4F4">Safed</button><button data-t="2" data-keep style="border-bottom:3px solid #FFC400">Peela</button><button data-t="3" data-keep style="border-bottom:3px solid #FF7A1A">Orange</button><button data-t="4" data-keep style="border-bottom:3px solid #FF9A3C">Combo</button></div></div>
+<h3>Stick (kitna jaldi react kare)</h3>
+<div class="row"><span></span><label for="ssens">Tezi</label><input type="range" id="ssens" min="50" max="200" step="5"><span class="v" id="ssensv"></span></div>
+<div class="row"><span></span><label for="sdz">Dead-zone</label><input type="range" id="sdz" min="0" max="40" step="1"><span class="v" id="sdzv"></span></div>
+<div id="sro">Stick ko chhuo, yahan value dikhegi</div>
+<button id="sdef" type="button">Stick default karo</button>
 <h3>Layout save (alag game ke liye)</h3>
 <div class="lay"><div class="lrow"><input id="lname" type="text" placeholder="Naam, jaise Cave Story" maxlength="20" autocomplete="off"><button id="lsave" type="button">Save</button></div><div id="llist"></div></div>
+<div id="curapp">TV par abhi: (pata nahi)</div><label class="tg"><input type="checkbox" id="autoL" checked> Game aane par layout apne aap lagao</label><p class="hint">🎮+ dabao: TV par jo game khula hai, ye layout uske liye jud jayega.</p>
+<h3>Macro (ek tap mein combo)</h3>
+<div id="mlist"></div>
+<input id="mname" type="text" placeholder="Macro ka naam, jaise Hadouken" maxlength="12" autocomplete="off">
+<div class="chips" id="mchips"></div>
+<div class="m2"><button id="msame" type="button">Saath-saath: band</button><button id="mwait" type="button">+Ruko</button><button id="mundo" type="button">&#9003;</button><button id="mclr" type="button">Saaf</button></div>
+<div id="mprev">Khali</div>
+<div class="seg" id="mspd"><button data-s="0">Tez</button><button data-s="1">Normal</button><button data-s="2">Dheema</button></div>
+<div class="m2"><button id="mtest" type="button">Test</button><button id="msave" type="button">Macro save</button></div>
+<p class="hint">Macro ke buttons controller ke neeche beech mein dikhte hain.</p>
 <h3>Control rakhna hai? (tick) aur size</h3>
 <div id="rows"></div>
 <button id="kbopen" type="button">Keyboard kholo (mobile)</button>
 <div class="acts"><button id="reset" type="button">Reset</button><button id="close" type="button">Band karo</button></div>
 </div>
+<div id="mbar" hidden></div>
 <div id="kbbar" hidden><input id="kbtext" type="text" placeholder="Yahan likho" autocomplete="off" autocapitalize="off" spellcheck="false"><button id="kbenter" type="button">&#8629;</button><button id="kbclear" type="button">Saaf</button><button id="kbclose" type="button">Band</button></div>
 <div id="rot">Turn your phone sideways for the full controller</div>
 <svg id="pad" viewBox="0 0 600 290" preserveAspectRatio="xMidYMid meet" role="group" aria-label="Dhruv Gamepad PS5 Edition">
@@ -183,6 +210,9 @@ dpG.addEventListener('pointermove',function(e){if(e.pointerId===dpPt)dpSet(dpDir
 ['pointerup','pointercancel','lostpointercapture'].forEach(function(t){dpG.addEventListener(t,function(e){if(e.pointerId===dpPt){dpPt=null;dpSet(null);}});});
 function relAll(){Object.keys(PR).forEach(function(id){pressBtn(PR[id],id,false);});dpPt=null;dpCur=null;}
 document.addEventListener('visibilitychange',function(){if(document.hidden)relAll();});window.addEventListener('blur',relAll);
+var STK={sens:100,dz:8};
+try{var sj=JSON.parse(localStorage.getItem('dgStick')||'{}');if(sj.sens>=50&&sj.sens<=200)STK.sens=sj.sens;if(sj.dz>=0&&sj.dz<=40)STK.dz=sj.dz;}catch(x){}
+function stkOut(r){var dz=STK.dz/100;if(r<=dz)return 0;var v=(r-dz)/(1-dz);v=Math.min(1,v*STK.sens/100);return Math.pow(v,.9);}
 document.querySelectorAll('.stick').forEach(function(s){
  var key=s.parentNode.dataset.k,cx=+s.dataset.cx,cy=+s.dataset.cy,knob=s.querySelector('.knob'),id=null;
  var tx=0,ty=0,px=0,py=0,vx=0,vy=0,raf=0,held=false,zz=1;
@@ -197,7 +227,7 @@ document.querySelectorAll('.stick').forEach(function(s){
  function go(){if(!raf)raf=requestAnimationFrame(draw);}
  function move(e){var z=sc(key),max=12*z,p=toSvg(e),dx=p.x-cx*1,dy=p.y-cy*1;zz=z;
   var d=Math.hypot(dx,dy);if(d>max){dx=dx/d*max;dy=dy/d*max;}
-  var r=Math.hypot(dx,dy)/max,c=r<.08?0:Math.pow(r,.9);var q=r>0?c/r:0;tx=dx*q;ty=dy*q;try{window.dispatchEvent(new CustomEvent('dgstick',{detail:{k:key,x:tx/max,y:ty/max}}));}catch(x){}go();}
+  var r=Math.hypot(dx,dy)/max,c=stkOut(r);var q=r>0?c/r:0;tx=dx;ty=dy;try{window.dispatchEvent(new CustomEvent('dgstick',{detail:{k:key,x:dx/max*q,y:dy/max*q}}));}catch(x){}go();}
  function reset(){id=null;held=false;s.classList.remove('held');tx=0;ty=0;try{window.dispatchEvent(new CustomEvent('dgstick',{detail:{k:key,x:0,y:0}}));}catch(x){}go();}
  s.addEventListener('pointerdown',function(e){e.preventDefault();if(id!==null)return;id=e.pointerId;try{s.setPointerCapture(id);}catch(x){}s.classList.add('held');held=true;move(e);});
  s.addEventListener('pointermove',function(e){if(e.pointerId===id)move(e);});
@@ -237,14 +267,96 @@ function saveL(){try{localStorage.setItem('dgLayouts',JSON.stringify(LAYS));loca
 function loadL(L,nm){SZ=JSON.parse(JSON.stringify(L.SZ||{}));ALL=L.ALL>=0.5&&L.ALL<=1.15?L.ALL:1;HIDE=JSON.parse(JSON.stringify(L.HIDE||{}));
  Object.keys(items).forEach(applyVis);Object.keys(items).forEach(applyItem);applyAll();showAll();save();saveHide();CURL=nm;saveL();drawL();}
 var llist=document.getElementById('llist'),lname=document.getElementById('lname');
+var lastPkg='',autoL=document.getElementById('autoL'),curapp=document.getElementById('curapp');
+try{autoL.checked=localStorage.getItem('dgAuto')!=='0';}catch(x){}
+function short(pk){var a=(pk||'').split('.');return a[a.length-1]||pk;}
+function showApp(msg){curapp.textContent=msg||('TV par abhi: '+(lastPkg||'(pata nahi - TV tez mode mein jodo)'));}
 function mkL(nm,L,canDel){var r=document.createElement('div');r.className='li';var n=document.createElement('span');n.className='ln'+(nm===CURL?' cur':'');n.textContent=(nm===CURL?'\u2713 ':'')+nm;
  var b=document.createElement('button');b.type='button';b.textContent='Kholo';b.addEventListener('click',function(){loadL(L,nm);});r.appendChild(n);r.appendChild(b);
- if(canDel){var d=document.createElement('button');d.type='button';d.className='del';d.textContent='Hatao';d.addEventListener('click',function(){if(d.dataset.sure){delete LAYS[nm];if(CURL===nm)CURL='';saveL();drawL();}else{d.dataset.sure='1';d.textContent='Pakka?';setTimeout(function(){d.dataset.sure='';d.textContent='Hatao';},2500);}});r.appendChild(d);}
+ if(canDel){var g=document.createElement('button');g.type='button';g.className='g';g.textContent=L.pkg?'\uD83C\uDFAE\u2713':'\uD83C\uDFAE+';g.title=L.pkg?short(L.pkg):'';
+  g.addEventListener('click',function(){if(L.pkg){showApp(nm+': '+short(L.pkg)+' se jod hata diya');delete L.pkg;}else if(lastPkg){Object.keys(LAYS).forEach(function(k){if(LAYS[k].pkg===lastPkg)delete LAYS[k].pkg;});L.pkg=lastPkg;showApp(nm+' ab '+short(lastPkg)+' game se juda hai');}else{showApp('Pehle TV jodo (tez mode) aur game kholo, phir dabao');return;}saveL();drawL();updWatch();});r.appendChild(g);
+  var d=document.createElement('button');d.type='button';d.className='del';d.textContent='Hatao';d.addEventListener('click',function(){if(d.dataset.sure){delete LAYS[nm];if(CURL===nm)CURL='';saveL();drawL();updWatch();}else{d.dataset.sure='1';d.textContent='Pakka?';setTimeout(function(){d.dataset.sure='';d.textContent='Hatao';},2500);}});r.appendChild(d);}
  llist.appendChild(r);}
 function drawL(){llist.innerHTML='';Object.keys(LAYS).forEach(function(k){mkL(k,LAYS[k],true);});Object.keys(PRE).forEach(function(k){mkL(k,PRE[k],false);});}
+/* TV se game ka naam aata hai (Kotlin -> dgApp) */
+window.dgApp=function(pk){if(!pk||pk===lastPkg)return;lastPkg=pk;showApp();
+ if(autoL.checked){var hit=Object.keys(LAYS).filter(function(k){return LAYS[k].pkg===pk;})[0];if(hit&&hit!==CURL){loadL(LAYS[hit],hit);showApp('TV: '+short(pk)+' \u2192 layout "'+hit+'" laga diya');}}};
+var wOn=null;
+function updWatch(){var any=Object.keys(LAYS).some(function(k){return LAYS[k].pkg;}),want=!!(autoL.checked&&(any||!panel.hidden));if(want!==wOn){wOn=want;try{if(window.Android&&Android.watch)Android.watch(want);}catch(x){}}}
+autoL.addEventListener('change',function(){try{localStorage.setItem('dgAuto',autoL.checked?'1':'0');}catch(x){}updWatch();});
+setInterval(updWatch,1500);
 document.getElementById('lsave').addEventListener('click',function(){var nm=lname.value.trim();if(!nm){lname.focus();return;}
  LAYS[nm]={SZ:JSON.parse(JSON.stringify(SZ)),ALL:ALL,HIDE:JSON.parse(JSON.stringify(HIDE))};CURL=nm;lname.value='';saveL();drawL();});
 drawL();
+
+/* ---- Stick sensitivity + dead-zone ---- */
+var ssE=document.getElementById('ssens'),sdE=document.getElementById('sdz'),ssv=document.getElementById('ssensv'),sdv=document.getElementById('sdzv'),sro=document.getElementById('sro');
+function showS(){ssE.value=STK.sens;sdE.value=STK.dz;ssv.textContent=STK.sens+'%';sdv.textContent=STK.dz+'%';}
+function saveS(){try{localStorage.setItem('dgStick',JSON.stringify(STK));}catch(x){}}
+ssE.addEventListener('input',function(){STK.sens=+ssE.value;showS();saveS();});
+sdE.addEventListener('input',function(){STK.dz=+sdE.value;showS();saveS();});
+document.getElementById('sdef').addEventListener('click',function(){STK.sens=100;STK.dz=8;showS();saveS();});
+showS();
+window.addEventListener('dgstick',function(e){if(panel.hidden)return;var d=e.detail;sro.textContent=d.k+'  x '+d.x.toFixed(2)+'   y '+d.y.toFixed(2);});
+
+/* ---- Macro ---- */
+var MACS=[],mEdit={steps:[],sp:1},mSame=false,mRun=false,BEL={};
+try{var mj=JSON.parse(localStorage.getItem('dgMacros')||'[]');if(Array.isArray(mj))MACS=mj.slice(0,6);}catch(x){}
+function saveM(){try{localStorage.setItem('dgMacros',JSON.stringify(MACS));}catch(x){}}
+document.querySelectorAll('.b').forEach(function(el){BEL[el.getAttribute('data-id')]=el;});
+var SYM={UP:'↑',DOWN:'↓',LEFT:'←',RIGHT:'→',TRIANGLE:'△',CIRCLE:'○',CROSS:'✕',SQUARE:'□',L1:'L1',R1:'R1',L2:'L2',R2:'R2'};
+var mchips=document.getElementById('mchips'),mprev=document.getElementById('mprev'),mname=document.getElementById('mname'),mlist=document.getElementById('mlist'),mbar=document.getElementById('mbar');
+function txt(steps){return steps.map(function(t){return t.k==='w'?'⏱':t.ids.map(function(i){return SYM[i]||i;}).join('+');}).join(' ');}
+function showE(){mprev.textContent=mEdit.steps.length?txt(mEdit.steps):'Khali - neeche ke buttons dabao';document.querySelectorAll('#mspd button').forEach(function(b){b.classList.toggle('on',+b.dataset.s===mEdit.sp);});var sb=document.getElementById('msame');sb.textContent='Saath-saath: '+(mSame?'ON':'band');sb.classList.toggle('on',mSame);}
+Object.keys(SYM).forEach(function(id){var b=document.createElement('button');b.type='button';b.textContent=SYM[id];b.addEventListener('click',function(){if(mEdit.steps.length>=24)return;var l=mEdit.steps[mEdit.steps.length-1];if(mSame&&l&&l.k==='s'){if(l.ids.indexOf(id)<0&&l.ids.length<4)l.ids.push(id);}else mEdit.steps.push({k:'s',ids:[id]});showE();});mchips.appendChild(b);});
+document.getElementById('msame').addEventListener('click',function(){mSame=!mSame;showE();});
+document.getElementById('mwait').addEventListener('click',function(){if(mEdit.steps.length<24){mEdit.steps.push({k:'w'});showE();}});
+document.getElementById('mundo').addEventListener('click',function(){mEdit.steps.pop();showE();});
+document.getElementById('mclr').addEventListener('click',function(){mEdit.steps=[];mname.value='';showE();});
+document.querySelectorAll('#mspd button').forEach(function(b){b.addEventListener('click',function(){mEdit.sp=+b.dataset.s;showE();});});
+function mTimeline(m){var tl=[],t=0,H=[45,70,110][m.sp]||70,G=[25,45,70][m.sp]||45;m.steps.forEach(function(st){if(st.k==='w'){t+=150;return;}st.ids.forEach(function(id){tl.push([t,id,1]);});t+=H;st.ids.forEach(function(id){tl.push([t,id,0]);});t+=G;});return tl;}
+var mBtn=null;
+function runM(m,btn){if(mRun||!m.steps.length)return;var tl=mTimeline(m),t0=performance.now(),i=0,done=false;mRun=true;if(btn){btn.classList.add('run');mBtn=btn;}ping(659,.05,1);
+ function fin(){if(done)return;done=true;Object.keys(BEL).forEach(function(id){if(PR[id]&&tl.some(function(e){return e[1]===id;}))pressBtn(BEL[id],id,false);});mRun=false;if(btn)btn.classList.remove('run');mBtn=null;}
+ mAbort=fin;
+ (function tick(){if(done)return;var now=performance.now()-t0;while(i<tl.length&&tl[i][0]<=now){var ev=tl[i++];if(BEL[ev[1]])pressBtn(BEL[ev[1]],ev[1],!!ev[2]);}
+  if(i<tl.length)setTimeout(tick,Math.max(0,tl[i][0]-(performance.now()-t0)));else setTimeout(fin,20);})();}
+var mAbort=null;
+document.addEventListener('visibilitychange',function(){if(document.hidden&&mAbort)mAbort();});window.addEventListener('blur',function(){if(mAbort)mAbort();});
+function drawM(){mlist.innerHTML='';mbar.innerHTML='';MACS.forEach(function(m,ix){
+  var r=document.createElement('div');r.className='ml';var n=document.createElement('span');n.className='ln';n.textContent=m.n+'  '+txt(m.steps);
+  var e=document.createElement('button');e.type='button';e.textContent='Badlo';e.addEventListener('click',function(){mEdit={steps:JSON.parse(JSON.stringify(m.steps)),sp:m.sp};mname.value=m.n;showE();});
+  var d=document.createElement('button');d.type='button';d.textContent='Hatao';d.addEventListener('click',function(){if(d.dataset.sure){MACS.splice(ix,1);saveM();drawM();}else{d.dataset.sure='1';d.textContent='Pakka?';setTimeout(function(){d.dataset.sure='';d.textContent='Hatao';},2500);}});
+  r.appendChild(n);r.appendChild(e);r.appendChild(d);mlist.appendChild(r);
+  var b=document.createElement('button');b.type='button';b.textContent=m.n;b.addEventListener('pointerdown',function(ev){ev.preventDefault();runM(m,b);});mbar.appendChild(b);});
+ mbar.hidden=!MACS.length;}
+document.getElementById('mtest').addEventListener('click',function(){runM({steps:mEdit.steps,sp:mEdit.sp},null);});
+document.getElementById('msave').addEventListener('click',function(){var nm=mname.value.trim();if(!nm){mname.focus();return;}if(!mEdit.steps.length)return;var o={n:nm,steps:JSON.parse(JSON.stringify(mEdit.steps)),sp:mEdit.sp},ix=-1;MACS.forEach(function(m,i){if(m.n===nm)ix=i;});if(ix>=0)MACS[ix]=o;else if(MACS.length<6)MACS.push(o);else{mprev.textContent='6 se zyada macro nahi - ek hatao';return;}saveM();drawM();mEdit={steps:[],sp:1};mname.value='';showE();});
+showE();drawM();
+
+/* ---- Theme (rang): neela ke saare rang naye rang mein badal jaate hain ---- */
+function toHsl(r,g,b){r/=255;g/=255;b/=255;var mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,h=0,s=0,d=mx-mn;if(d){s=l>.5?d/(2-mx-mn):d/(mx+mn);if(mx===r)h=((g-b)/d+(g<b?6:0));else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;}return[h,s,l];}
+function fromHsl(h,s,l){h=((h%360)+360)%360/360;var f=function(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t<1/2)return q;if(t<2/3)return p+(q-p)*(2/3-t)*6;return p;},q=l<.5?l*(1+s):l+s-l*s,p=2*l-q;return[f(p,q,h+1/3),f(p,q,h),f(p,q,h-1/3)].map(function(v){return Math.round(Math.max(0,Math.min(1,v))*255);});}
+var THEMES=[null,
+ function(h,s,l){return l<.24?[215,.10,l]:l<.56?[215,.04,.78]:[215,.04,.93];},
+ function(h,s,l){return l<.24?[46,s*.8,l]:l<.56?[46,.95,.5]:[48,.95,.72];},
+ function(h,s,l){return l<.24?[22,s*.8,l]:l<.56?[24,.95,.52]:[30,.95,.7];},
+ function(h,s,l){return l<.24?[h,s,l]:l<.56?[24,.95,.55]:[47,.95,.72];}];
+var thN=0;try{thN=parseInt(localStorage.getItem('dgTheme'),10)||0;}catch(x){}
+function mapHex(r,g,b){var t=THEMES[thN];if(!t)return null;var c=toHsl(r,g,b);if(!(c[0]>=190&&c[0]<=265&&c[1]>.2))return null;var n=t(c[0],c[1],c[2]);return fromHsl(n[0],n[1],n[2]);}
+function recolorStr(str){return str.replace(/#([0-9a-fA-F]{6})\b/g,function(m,hx){var o=mapHex(parseInt(hx.slice(0,2),16),parseInt(hx.slice(2,4),16),parseInt(hx.slice(4,6),16));return o?'#'+o.map(function(v){return(v<16?'0':'')+v.toString(16);}).join(''):m;}).replace(/rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,/g,function(m,r,g,b){var o=mapHex(+r,+g,+b);return o?'rgba('+o.join(',')+',':m;});}
+var RATT=['fill','stroke','stop-color','flood-color','style'];
+function recolorAll(){
+ document.querySelectorAll('style').forEach(function(st){if(st.__o===undefined)st.__o=st.textContent;var n=recolorStr(st.__o);if(st.textContent!==n)st.textContent=n;});
+ document.querySelectorAll('body *').forEach(function(el){if(el.closest&&el.closest('[data-keep]'))return;RATT.forEach(function(a){if(!el.hasAttribute||!el.hasAttribute(a)&&!(el.__o&&a in el.__o))return;if(!el.__o)el.__o={};if(!(a in el.__o))el.__o[a]=el.getAttribute(a);var n=recolorStr(el.__o[a]);if(el.getAttribute(a)!==n)el.setAttribute(a,n);});});
+}
+window.dgRecolor=recolorAll;
+var thB=document.querySelectorAll('#thseg button');
+var ACC=['#4DA3FF','#d9dde3','#FFC400','#FF7A1A','#FF9A3C'];
+function showT(){document.documentElement.style.accentColor=ACC[thN]||'';thB.forEach(function(b){b.classList.toggle('on',+b.dataset.t===thN);});}
+thB.forEach(function(b){b.addEventListener('click',function(){thN=+b.dataset.t;try{localStorage.setItem('dgTheme',String(thN));}catch(x){}showT();recolorAll();});});
+showT();if(thN)recolorAll();
+
 
 if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(x){x.unregister();});}).catch(function(){});}
 if(window.caches){caches.keys().then(function(k){k.forEach(function(n){caches.delete(n);});}).catch(function(){});}
@@ -260,15 +372,15 @@ function sm(d){d=Math.max(d,12);return [Math.round(d*.5),4,Math.round(d*.3),5,Ma
 function vib(p){if(!O.vib||!navigator.vibrate)return;try{navigator.vibrate(typeof p==='number'?sm(p):p);}catch(x){}}
 var ac=null;
 function ctx(){if(!ac){try{var C=window.AudioContext||window.webkitAudioContext;if(C)ac=new C();}catch(x){}}if(ac&&ac.state==='suspended'){try{ac.resume();}catch(x){}}return ac;}
-var mst=null,live=0;
+var mst=null,vend=[];
 function master(c){if(!mst){var g=c.createGain(),cp=c.createDynamicsCompressor();g.gain.value=.8;cp.threshold.value=-18;cp.knee.value=20;cp.ratio.value=8;cp.attack.value=.003;cp.release.value=.12;g.connect(cp);cp.connect(c.destination);mst=g;}return mst;}
 /* ek aawaaz: dheere shuru (click nahi), dheere khatam (zero tak), band hone par disconnect */
 function voice(c,out,type,f,f2,t,att,dur,pk,cut){var o=c.createOscillator(),g=c.createGain(),lp=c.createBiquadFilter();
  lp.type='lowpass';lp.frequency.value=cut;o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+.03);
  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(pk,t+att);g.gain.exponentialRampToValueAtTime(Math.max(pk*.002,.0002),t+att+dur);g.gain.linearRampToValueAtTime(0,t+att+dur+.025);
- o.connect(g);g.connect(lp);lp.connect(out);live++;o.onended=function(){live--;try{lp.disconnect();g.disconnect();}catch(x){}};o.start(t);o.stop(t+att+dur+.04);}
+ o.connect(g);g.connect(lp);lp.connect(out);vend.push(t+att+dur+.04);o.onended=function(){try{lp.disconnect();g.disconnect();}catch(x){}};o.start(t);o.stop(t+att+dur+.04);}
 /* teen awaaz style: 0 Crystal (kaanch ki halki ghanti), 1 Naram (thum), 2 Klik (tock) */
-function ping(f,d,v,t0){var c=ctx();if(!c||!O.vol)return;if(live>6)return;
+function ping(f,d,v,t0){var c=ctx();if(!c||!O.vol)return;var nw=c.currentTime;vend=vend.filter(function(e){return e>nw;});if(vend.length>6)return;
  try{var t=c.currentTime+(t0||0)+.005,pk=(O.vol/100)*(v||1)*.5,sty=O.snd||0,out=master(c);
   if(sty===0){voice(c,out,'sine',f,0,t,.008,d*2.2,pk,5000);voice(c,out,'sine',f*2.76,0,t,.006,d*.9,pk*.2,5000);}
   else if(sty===1){voice(c,out,'sine',f*.8,0,t,.016,d*1.6,pk*.8,900);}
@@ -283,7 +395,7 @@ function hapt(id){var k=KIND[id]||'fc',b=BASE[O.vib]||0;
  else if(k==='ps'){vib(sm(b).concat([50],sm(b)));ping(523,.1,1);ping(784,.16,1,.11);}
  else if(k==='sm'){if(id==='MUTE'){ping(330,.07,.9);}else{var n=id==='CREATE'?698:587;ping(n,.05,.9);ping(n,.05,.7,.09);}}
  else if(k==='tp'){vib(Math.round(b*.6));ping(880,.03,.5);}}
-window.addEventListener('dgbtn',function(e){if(e.detail.down)hapt(e.detail.id);});
+window.addEventListener('dgbtn',function(e){if(e.detail.down&&!mRun)hapt(e.detail.id);});
 document.addEventListener('pointerdown',function(e){var s=e.target.closest&&e.target.closest('.stick');if(s){vib(Math.round((BASE[O.vib]||0)*.7));ping(262,.05,.6);}},true);
 var edge={};
 document.addEventListener('pointermove',function(e){var s=e.target.closest&&e.target.closest('.stick');if(!s)return;var k=s.dataset.cx,cr=s.firstElementChild.getBoundingClientRect(),dx=e.clientX-(cr.left+cr.width/2),dy=e.clientY-(cr.top+cr.height/2),far=Math.hypot(dx,dy)>cr.width*0.2;if(far&&!edge[k]){edge[k]=1;vib(Math.round((BASE[O.vib]||0)*.9));ping(349,.05,.5);}else if(!far)edge[k]=0;},true);
